@@ -207,41 +207,82 @@
   padding-block: calc(var(--header-height) + var(--space-lg)) var(--space-xl);
 }
 
-.section-eyebrow {
-  display: inline-flex;
-  align-items: center;
+/**
+ * Intitulé de section.
+ *
+ * Trois informations, trois traitements : l'index de pose en pastille pleine,
+ * le nom de la section en capitales espacées, les coordonnées réelles de la
+ * caméra en retrait. Le filet qui les sépare rappelle le cartouche d'un plan.
+ */
+.eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: var(--space-2xs);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
   font-family: var(--font-mono);
   font-size: var(--text-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--color-cyan);
+  letter-spacing: var(--tracking-data);
 }
 
-.section-eyebrow::before {
+.eyebrow__index {
+  padding: 0.2em 0.5em;
+  border-radius: 2px;
+  background: var(--color-cyan);
+  color: var(--color-on-accent);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow__label {
+  color: var(--color-text);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.eyebrow__pose {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75em;
+  color: var(--color-text-faint);
+}
+
+.eyebrow__pose::before {
   content: '';
-  width: 2rem;
+  width: 2.5rem;
   height: 1px;
   background: currentcolor;
+  opacity: 0.55;
+}
+
+/* Les coordonnées sont un détail d'ambiance : elles cèdent la place en premier. */
+@media (max-width: 35.99em) {
+  .eyebrow__pose {
+    display: none;
+  }
 }
 
 .section-title {
   font-size: var(--text-h2);
-  letter-spacing: -0.02em;
-  margin-bottom: var(--space-sm);
+  letter-spacing: -0.015em;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  max-width: 20ch;
 }
 
+/* 42 caractères : la ligne reste confortable et le texte ne vient pas mordre
+   sur l'objet 3D, décalé à droite du cadre. */
 .section-lead {
-  max-width: 46ch;
+  max-width: 42ch;
   font-size: var(--text-lead);
   color: var(--color-text-muted);
 }
 
 /* --- Pied de page -------------------------------------------------------- */
 .site-footer {
-  padding: var(--space-xl) var(--gutter) calc(var(--space-lg) + env(safe-area-inset-bottom));
+  padding: var(--space-xl) var(--gutter)
+    calc(var(--space-lg) + var(--readout-height) + env(safe-area-inset-bottom));
   border-top: 1px solid var(--border-subtle);
   background: rgb(4 6 14 / 0.72);
   backdrop-filter: blur(var(--glass-blur));

@@ -24,6 +24,14 @@ export interface ScrollState {
   orbitPitch: number
   /** Distance de caméra choisie par l'utilisateur (zoom manuel). */
   zoom: number
+  /**
+   * Distance réelle entre la caméra et l'objet, en unités de scène.
+   *
+   * Écrite par `CameraRig` à chaque image et lue par le bandeau de relevé :
+   * la valeur affichée à l'écran est donc la vraie, pas une simulation.
+   * Vaut 0 tant qu'aucune image n'a été rendue (repli sans WebGL).
+   */
+  cameraDistance: number
 }
 
 export const scrollState: ScrollState = {
@@ -37,6 +45,7 @@ export const scrollState: ScrollState = {
   orbitYaw: 0,
   orbitPitch: 0,
   zoom: 0,
+  cameraDistance: 0,
 }
 
 /** Réinitialise l'état de défilement (bouton « Recommencer », démontage). */
@@ -51,4 +60,5 @@ export function resetScrollState(): void {
   scrollState.orbitYaw = 0
   scrollState.orbitPitch = 0
   scrollState.zoom = 0
+  scrollState.cameraDistance = 0
 }

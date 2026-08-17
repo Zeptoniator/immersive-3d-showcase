@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Palette reprise de src/styles/tokens.css côté web. -->
+    <color name="void_deep">#04060E</color>
+    <color name="night">#0B1226</color>
+    <color name="cyan">#35E0FF</color>
+    <color name="electric">#3B73FF</color>
+    <color name="violet">#A855F7</color>
+    <color name="text">#E9EEFC</color>
+    <color name="text_muted">#9FB0D4</color>
+</resources>

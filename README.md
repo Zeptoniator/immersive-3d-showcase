@@ -27,6 +27,7 @@ site fonctionne donc hors ligne et n'appelle aucun service tiers.
 - [Tests](#tests)
 - [Commandes disponibles](#commandes-disponibles)
 - [Structure du projet](#structure-du-projet)
+- [Direction artistique](#direction-artistique)
 - [Personnalisation des couleurs](#personnalisation-des-couleurs)
 - [Remplacer l'objet procédural par un modèle GLB](#remplacer-lobjet-procédural-par-un-modèle-glb)
 - [Optimiser un modèle avec Blender](#optimiser-un-modèle-avec-blender)
@@ -79,6 +80,7 @@ Une image sociale prête à l'emploi est déjà fournie dans `public/og-image.pn
 | État partagé          | Zustand                  | 5       |
 | Routage               | React Router             | 7       |
 | Icônes                | lucide-react             | 1       |
+| Typographie           | IBM Plex (@fontsource)   | 5.3     |
 | Qualité               | ESLint + Prettier        | 10 / 3  |
 | Tests unitaires       | Vitest + Testing Library | 4 / 16  |
 | Tests E2E             | Playwright               | 1.62    |
@@ -353,6 +355,68 @@ Conséquence directe : la scène ne capte jamais le défilement, et son échec
 | ------------------------------------------------------------ | ------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | Scène prête, section active, qualité, pause, point d'intérêt | `useExperienceStore` (Zustand) | Changements discrets, peu fréquents, qui doivent provoquer un rendu React                               |
 | Progression du défilement, orbite, zoom, pointeur            | `scrollState` (objet mutable)  | Valeurs mises à jour à chaque image ; les stocker dans React reconstruirait l'arbre 60 fois par seconde |
+
+---
+
+## Direction artistique
+
+NOVA CORE n'est pas un produit en vente : c'est un spécimen d'étude présenté
+sous instrument. Le vocabulaire visuel suit cette lecture plutôt que celui d'une
+plaquette commerciale.
+
+### Typographie
+
+Une seule superfamille tenue sur trois rôles, la famille dessinée par IBM pour
+sa documentation d'ingénierie :
+
+| Rôle    | Fonte                           | Emploi                                                                 |
+| ------- | ------------------------------- | ---------------------------------------------------------------------- |
+| Titres  | IBM Plex Sans Condensed 600/700 | Étroite et verticale, façon cartouche de plan technique                |
+| Corps   | IBM Plex Sans 400/500           | Lisibilité à l'écran                                                   |
+| Données | IBM Plex Mono 400/500           | Chiffres, coordonnées, relevés — partout où l'alignement porte du sens |
+
+Le contraste de chasse entre un titre étroit et un corps de largeur normale
+suffit à établir la hiérarchie : ni empilement de graisses, ni couleurs
+supplémentaires.
+
+### Couleur
+
+Le dégradé de marque n'apparaît qu'à **deux endroits** : la ligne d'accent du
+titre d'accueil et la pastille de marque. Partout ailleurs le cyan est utilisé à
+plat. Un dégradé répété sur chaque chiffre et chaque bouton finit par ne plus
+rien signaler.
+
+Une seule couleur chaude complète la gamme froide : l'**ambre de
+signalisation** (`--color-signal`). Elle est réservée au bandeau de relevé et
+n'apparaît que lorsqu'une valeur mesurée s'écarte du nominal — qualité
+rétrogradée, fluidité basse. Elle porte donc une information, elle ne décore
+rien.
+
+### Numérotation des sections
+
+L'index affiché à côté de chaque titre n'est pas une numérotation décorative. Il
+provient de `CAMERA_POSES` (`src/utils/cameraPath.ts`), la table qui pilote
+réellement la caméra : la page compte exactement autant de sections que la
+trajectoire a de poses, et le numéro désigne l'endroit où se trouve la caméra
+pendant qu'on lit ce texte. Les coordonnées affichées à côté sont celles de
+cette pose. Un test vérifie que les deux listes restent alignées.
+
+### Bandeau de relevé
+
+C'est l'élément signature du site : un bandeau fixe en bas de fenêtre affichant
+la pose courante, la distance caméra, l'ouverture de la coque, le niveau de
+qualité appliqué et la fréquence d'images.
+
+**Chaque valeur est réellement mesurée**, jamais simulée : la distance est celle
+que `CameraRig` vient d'appliquer, l'ouverture est la variable qui écarte les
+panneaux, les images par seconde sont comptées sur place. C'est la contrepartie
+honnête des indicateurs fictifs de la section Performances — ceux-là décrivent
+un produit imaginaire, ceux-ci décrivent ce que la machine fait à l'instant.
+
+Le bandeau n'entraîne aucun rendu React : la boucle écrit directement dans le
+`textContent` des cellules. Il est masqué aux lecteurs d'écran, ses valeurs
+changeant plusieurs fois par seconde et toutes les informations utiles qu'il
+résume étant déjà exposées en clair ailleurs dans la page.
 
 ---
 
@@ -657,8 +721,11 @@ server {
 - **Ressources visuelles** : le favicon et l'image sociale
   (`public/og-image.png`) ont été créés localement pour ce projet et suivent la
   licence du dépôt. Aucune ressource externe n'est téléchargée à l'exécution.
-- **Polices** : uniquement les polices système (`system-ui`, `ui-monospace`).
-  Aucune requête vers un service de polices distant.
+- **Polices** : IBM Plex Sans, IBM Plex Sans Condensed et IBM Plex Mono,
+  © IBM Corp., sous licence **SIL Open Font License 1.1**. Les fichiers sont
+  fournis par les paquets `@fontsource`, compilés dans le bundle et servis
+  depuis l'origine du site — aucune requête vers un service de polices distant,
+  le site reste utilisable hors ligne.
 - **Bibliothèques** : Three.js (MIT), React (MIT), React Three Fiber (MIT), Drei
   (MIT), Zustand (MIT), React Router (MIT), lucide-react (ISC),
   GSAP (licence standard « no charge » — vérifier les conditions de GreenSock

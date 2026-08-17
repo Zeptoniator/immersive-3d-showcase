@@ -1,5 +1,6 @@
 import { PERFORMANCE_STATS, PRODUCT_NAME } from '../../utils/content'
 import { QualitySelector } from '../ui/QualitySelector'
+import { SectionEyebrow } from '../ui/SectionEyebrow'
 
 /**
  * Section Performances.
@@ -12,9 +13,7 @@ export function PerformanceSection() {
   return (
     <section id="performance" className="section" aria-labelledby="performance-title">
       <div className="section__inner">
-        <p className="section-eyebrow" data-reveal>
-          Performances
-        </p>
+        <SectionEyebrow section="performance">Performances</SectionEyebrow>
         <h2 className="section-title" id="performance-title" data-reveal>
           Le rendu s&apos;adapte à votre machine
         </h2>

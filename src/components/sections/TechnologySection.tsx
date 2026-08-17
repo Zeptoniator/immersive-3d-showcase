@@ -1,6 +1,7 @@
 import { Cpu, Layers, Zap } from 'lucide-react'
 import type { Feature } from '../../types'
 import { FEATURES } from '../../utils/content'
+import { SectionEyebrow } from '../ui/SectionEyebrow'
 
 const ICONS = {
   zap: Zap,
@@ -32,9 +33,7 @@ export function TechnologySection() {
   return (
     <section id="technology" className="section technology" aria-labelledby="technology-title">
       <div className="section__inner technology__sticky">
-        <p className="section-eyebrow" data-reveal>
-          Technologie
-        </p>
+        <SectionEyebrow section="technology">Technologie</SectionEyebrow>
         <h2 className="section-title" id="technology-title" data-reveal>
           Trois principes, une seule boucle de rendu
         </h2>

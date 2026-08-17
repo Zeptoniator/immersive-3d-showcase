@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NOVA CORE</string>
+
+    <string name="error_offline_title">Aucune connexion</string>
+    <string name="error_offline_message">L\'application affiche le site NOVA CORE hébergé en ligne. Vérifiez votre connexion réseau, puis réessayez.</string>
+
+    <string name="error_load_title">Chargement impossible</string>
+    <string name="error_load_message">Le site n\'a pas pu être chargé. Le serveur est peut-être momentanément indisponible.</string>
+
+    <string name="error_retry">Réessayer</string>
+</resources>

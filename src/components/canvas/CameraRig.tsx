@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { scrollState } from '../../store/scrollState'
+import { CAMERA_POSES, type CameraPose } from '../../utils/cameraPath'
 import { clamp, damp } from '../../utils/math'
 
 /**
@@ -13,31 +14,15 @@ import { clamp, damp } from '../../utils/math'
  * dans le défilement reste fluide, sans à-coup.
  */
 
-interface Keyframe {
-  /** Progression globale à laquelle cette pose est atteinte. */
-  at: number
-  position: [number, number, number]
-  lookAt: [number, number, number]
-}
-
-/** Trajectoire cinématique, du hero jusqu'à la section finale. */
-const KEYFRAMES: ReadonlyArray<Keyframe> = [
-  { at: 0.0, position: [0.4, 0.7, 8.4], lookAt: [0, 0.1, 0] },
-  { at: 0.28, position: [3.6, 1.9, 5.9], lookAt: [0, 0.15, 0] },
-  { at: 0.52, position: [0, 0.4, 6.8], lookAt: [0, 0, 0] },
-  { at: 0.76, position: [-3.9, 2.4, 6.6], lookAt: [0, 0.2, 0] },
-  { at: 1.0, position: [0, 0.9, 9.6], lookAt: [0, 0, 0] },
-]
-
 /**
  * Indice de la première pose du segment contenant `progress`.
  * Fonction pure, sans allocation : appelée à chaque image.
  */
 function findSegmentIndex(progress: number): number {
-  for (let index = 0; index < KEYFRAMES.length - 1; index += 1) {
-    if (progress <= (KEYFRAMES[index + 1] as Keyframe).at) return index
+  for (let index = 0; index < CAMERA_POSES.length - 1; index += 1) {
+    if (progress <= (CAMERA_POSES[index + 1] as CameraPose).at) return index
   }
-  return KEYFRAMES.length - 2
+  return CAMERA_POSES.length - 2
 }
 
 interface CameraRigProps {
@@ -70,8 +55,8 @@ export function CameraRig({ reducedMotion }: CameraRigProps) {
 
     // --- Interpolation le long de la trajectoire ----------------------------
     const segment = findSegmentIndex(progress)
-    const previous = KEYFRAMES[segment] as Keyframe
-    const next = KEYFRAMES[segment + 1] as Keyframe
+    const previous = CAMERA_POSES[segment] as CameraPose
+    const next = CAMERA_POSES[segment + 1] as CameraPose
 
     const span = next.at - previous.at
     const localT = span === 0 ? 0 : clamp((progress - previous.at) / span, 0, 1)
@@ -137,6 +122,10 @@ export function CameraRig({ reducedMotion }: CameraRigProps) {
     scratch.view.y -= portrait ? 1.15 : 0
 
     camera.lookAt(scratch.view)
+
+    // Distance réelle caméra ↔ objet, publiée pour le bandeau de relevé.
+    scrollState.cameraDistance = camera.position.distanceTo(scratch.lookAt)
+
     invalidate()
   })
 

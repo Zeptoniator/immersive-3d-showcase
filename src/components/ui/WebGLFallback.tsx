@@ -24,7 +24,9 @@ export function WebGLFallback({ reason }: WebGLFallbackProps) {
       </div>
 
       <div className="webgl-fallback__content">
-        <p className="section-eyebrow">Mode dégradé</p>
+        <p className="eyebrow">
+          <span className="eyebrow__label">Mode dégradé</span>
+        </p>
         <h3 className="panel__title">Aperçu statique de {PRODUCT_NAME}</h3>
         <p className="panel__text">
           Le rendu 3D temps réel n&apos;a pas pu démarrer sur cet appareil. L&apos;intégralité du

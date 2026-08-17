@@ -57,13 +57,22 @@ textarea {
   color: inherit;
 }
 
+/**
+ * Les titres passent en condensé.
+ *
+ * Le contraste de chasse entre un titre étroit et un corps de texte de largeur
+ * normale fait tout le travail de hiérarchie : inutile d'empiler les graisses
+ * et les couleurs par-dessus.
+ */
 h1,
 h2,
 h3,
 h4 {
+  font-family: var(--font-display);
   line-height: var(--leading-tight);
   text-wrap: balance;
   font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
 p {

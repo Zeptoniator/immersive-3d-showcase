@@ -35,3 +35,15 @@ test-results
 .env.local
 .env.*.local
 !.env.example
+
+# Android
+android/build
+android/app/build
+android/.gradle
+android/.idea
+android/local.properties
+android/captures
+*.apk
+*.aab
+*.keystore
+*.jks

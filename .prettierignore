@@ -6,3 +6,10 @@ test-results
 package-lock.json
 *.glb
 *.gltf
+
+# Android (sources Kotlin/XML et artefacts de compilation)
+android/build
+android/app/build
+android/.gradle
+android/gradlew
+android/gradle/wrapper

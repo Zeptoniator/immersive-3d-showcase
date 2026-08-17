@@ -1,0 +1,33 @@
+/**
+ * Familles de caractères — IBM Plex.
+ *
+ * Une seule superfamille tenue sur trois rôles : la famille dessinée par IBM
+ * pour sa documentation d'ingénierie, ce qui correspond exactement au registre
+ * du site (un spécimen technique sous instrument, pas une plaquette produit).
+ *
+ * - **Condensed 600/700** : les titres. Étroite, verticale, elle évoque le
+ *   cartouche d'un plan technique et permet des titres longs sans les casser.
+ * - **Sans 400/500** : le corps de texte, dessiné pour la lisibilité à l'écran.
+ * - **Mono 400/500** : les données. Chiffres, coordonnées, relevés en direct —
+ *   partout où l'alignement des colonnes porte du sens.
+ *
+ * Les fichiers proviennent des paquets `@fontsource`, donc du dépôt lui-même :
+ * ils sont compilés dans le bundle et servis depuis notre propre origine.
+ * Aucune requête vers un service de polices distant, le site reste utilisable
+ * hors ligne. Licence SIL Open Font License 1.1 (voir README, « Crédits »).
+ *
+ * Seul le sous-ensemble latin est importé, et seulement les graisses réellement
+ * utilisées : six fichiers woff2 au total.
+ */
+
+/* Titres */
+@import '@fontsource/ibm-plex-sans-condensed/latin-600.css';
+@import '@fontsource/ibm-plex-sans-condensed/latin-700.css';
+
+/* Corps de texte */
+@import '@fontsource/ibm-plex-sans/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-500.css';
+
+/* Données et relevés */
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';

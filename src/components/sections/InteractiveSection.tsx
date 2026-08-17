@@ -4,6 +4,7 @@ import { scrollState } from '../../store/scrollState'
 import { useExperienceStore } from '../../store/useExperienceStore'
 import { HOTSPOTS } from '../../utils/content'
 import { clamp } from '../../utils/math'
+import { SectionEyebrow } from '../ui/SectionEyebrow'
 
 /** Amplitude maximale du basculement vertical, en radians. */
 const PITCH_LIMIT = 0.55
@@ -153,9 +154,7 @@ export function InteractiveSection() {
   return (
     <section id="interactive" className="section" aria-labelledby="interactive-title">
       <div className="section__inner">
-        <p className="section-eyebrow" data-reveal>
-          Exploration
-        </p>
+        <SectionEyebrow section="interactive">Exploration</SectionEyebrow>
         <h2 className="section-title" id="interactive-title" data-reveal>
           Prenez les commandes
         </h2>

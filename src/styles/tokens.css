@@ -1,9 +1,13 @@
 /**
  * Jetons de design — point d'entrée unique pour personnaliser l'apparence.
  *
+ * Direction : NOVA CORE n'est pas un produit en vente, c'est un spécimen sous
+ * instrument. Le vocabulaire visuel est donc celui d'une console technique —
+ * relevés en monospace, titres en condensé façon cartouche de plan, filets d'un
+ * pixel — plutôt que celui d'une plaquette commerciale.
+ *
  * Modifier les valeurs ci-dessous suffit à re-thémer l'ensemble du site :
- * couleurs, espacements, rayons, durées. Aucun composant ne code une couleur
- * en dur.
+ * aucun composant ne code une couleur ni une police en dur.
  */
 
 :root {
@@ -20,6 +24,16 @@
   --color-cyan: #35e0ff;
   --color-violet: #a855f7;
   --color-accent-soft: #7aa2ff;
+
+  /**
+   * Ambre de signalisation.
+   *
+   * Unique couleur chaude de la palette, réservée à un seul usage : signaler
+   * dans le relevé qu'une valeur mesurée s'écarte du nominal (qualité
+   * rétrogradée, fluidité basse). Elle porte donc une information, elle ne
+   * décore rien — c'est ce qui justifie sa présence hors de la gamme froide.
+   */
+  --color-signal: #ffb454;
 
   /* --- Texte ------------------------------------------------------------ */
   --color-text: #e9eefc;
@@ -46,18 +60,24 @@
   --border-focus: var(--color-cyan);
 
   /* --- Dégradés --------------------------------------------------------- */
+  /**
+   * Le dégradé de marque est tenu à un seul emploi visible : la ligne d'accent
+   * du titre d'accueil. Partout ailleurs, le cyan est utilisé à plat. Un
+   * dégradé répété sur chaque chiffre et chaque bouton finit par ne plus rien
+   * signaler du tout.
+   */
   --gradient-brand: linear-gradient(
     100deg,
     var(--color-cyan) 0%,
     var(--color-accent-soft) 45%,
     var(--color-violet) 100%
   );
-  --gradient-surface: linear-gradient(160deg, rgb(35 56 108 / 0.42) 0%, rgb(11 18 38 / 0.2) 100%);
 
   /* --- Lueurs ----------------------------------------------------------- */
   --glow-cyan: 0 0 0 1px rgb(53 224 255 / 0.25), 0 0 32px -8px rgb(53 224 255 / 0.55);
-  --glow-violet: 0 0 40px -12px rgb(168 85 247 / 0.6);
   --shadow-panel: 0 24px 60px -32px rgb(2 4 10 / 0.9);
+  /* Filet clair sur l'arête supérieure : donne l'épaisseur d'une plaque. */
+  --edge-highlight: inset 0 1px 0 0 rgb(154 186 255 / 0.14);
 
   /* --- Échelle d'espacement (base 4px) ---------------------------------- */
   --space-3xs: 0.25rem;
@@ -71,29 +91,32 @@
   --space-3xl: 7.5rem;
 
   /* --- Rayons ----------------------------------------------------------- */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.25rem;
+  /* Rayons courts : une plaque d'instrument n'a pas de coins arrondis mous. */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
   --radius-pill: 999px;
 
   /* --- Typographie ------------------------------------------------------ */
-  --font-sans:
-    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Ubuntu, Cantarell,
-    sans-serif;
-  --font-mono:
-    ui-monospace, 'JetBrains Mono', 'Fira Code', 'SFMono-Regular', 'Ubuntu Mono', Menlo, monospace;
+  /* Trois rôles, une seule superfamille. Voir styles/fonts.css. */
+  --font-display: 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
+  --text-micro: clamp(0.625rem, 0.6rem + 0.12vw, 0.688rem);
   --text-eyebrow: clamp(0.688rem, 0.64rem + 0.2vw, 0.75rem);
   --text-sm: clamp(0.813rem, 0.78rem + 0.16vw, 0.875rem);
   --text-body: clamp(0.938rem, 0.9rem + 0.24vw, 1.063rem);
   --text-lead: clamp(1.063rem, 0.98rem + 0.42vw, 1.25rem);
-  --text-h3: clamp(1.125rem, 1.02rem + 0.5vw, 1.375rem);
-  --text-h2: clamp(1.75rem, 1.32rem + 1.9vw, 3rem);
-  --text-display: clamp(2.25rem, 1.1rem + 4.2vw, 4.5rem);
+  --text-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --text-h2: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+  /* Le condensé supporte de très grandes tailles sans casser la colonne. */
+  --text-display: clamp(2.5rem, 1.2rem + 4.6vw, 5.25rem);
 
-  --tracking-wide: 0.18em;
-  --leading-tight: 1.1;
-  --leading-body: 1.65;
+  --tracking-wide: 0.2em;
+  --tracking-data: 0.06em;
+  --leading-tight: 1.02;
+  --leading-body: 1.62;
 
   /* --- Mouvement -------------------------------------------------------- */
   --duration-fast: 140ms;
@@ -105,6 +128,8 @@
   --content-max: 72rem;
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
   --header-height: 4rem;
+  /* Hauteur du bandeau de relevé, réservée en bas de page. */
+  --readout-height: 2.25rem;
 
   /* Flou de verre : réduit à zéro quand l'utilisateur demande du contraste. */
   --glass-blur: 14px;

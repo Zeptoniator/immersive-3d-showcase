@@ -9,6 +9,7 @@ import { FinalSection } from '../components/sections/FinalSection'
 import { ErrorBoundary } from '../components/ui/ErrorBoundary'
 import { LiveAnnouncer } from '../components/ui/LiveAnnouncer'
 import { LoadingScreen } from '../components/ui/LoadingScreen'
+import { TelemetryReadout } from '../components/ui/TelemetryReadout'
 import { usePointerParallax } from '../hooks/usePointerParallax'
 import { usePrefersReducedMotion } from '../hooks/useMediaQuery'
 import { useScrollChoreography } from '../hooks/useScrollChoreography'
@@ -110,6 +111,8 @@ export function HomePage() {
 
         <Footer />
       </div>
+
+      <TelemetryReadout />
     </div>
   )
 }

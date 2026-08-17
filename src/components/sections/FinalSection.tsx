@@ -3,6 +3,7 @@ import { RefreshCw, Rocket } from 'lucide-react'
 import { resetScrollState } from '../../store/scrollState'
 import { useExperienceStore } from '../../store/useExperienceStore'
 import { PRODUCT_NAME, TECH_SPECS } from '../../utils/content'
+import { SectionEyebrow } from '../ui/SectionEyebrow'
 
 /**
  * Section finale : appel à l'action, remise à zéro et fiche technique.
@@ -22,9 +23,7 @@ export function FinalSection() {
     <section id="final" className="section" aria-labelledby="final-title">
       <div className="section__inner final__inner">
         <div>
-          <p className="section-eyebrow" data-reveal>
-            Et ensuite
-          </p>
+          <SectionEyebrow section="final">Et ensuite</SectionEyebrow>
           <h2 className="section-title" id="final-title" data-reveal>
             Une base réutilisable pour vos propres projets
           </h2>
