@@ -1,0 +1,348 @@
+/** Composants d'interface réutilisables. */
+
+/* --- Boutons ------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  /* 44px de haut minimum : cible tactile confortable. */
+  min-height: 2.75rem;
+  padding: var(--space-2xs) var(--space-md);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  color: var(--color-on-accent);
+  background: var(--gradient-brand);
+  box-shadow: var(--glow-cyan);
+}
+
+.btn--primary:hover:not(:disabled) {
+  box-shadow:
+    0 0 0 1px rgb(53 224 255 / 0.5),
+    0 0 42px -6px rgb(53 224 255 / 0.7);
+}
+
+.btn--secondary {
+  color: var(--color-text);
+  border-color: var(--border-strong);
+  background: var(--surface-glass);
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+.btn--secondary:hover:not(:disabled) {
+  border-color: var(--color-cyan);
+  background: rgb(53 224 255 / 0.12);
+}
+
+.btn--ghost {
+  min-height: 2.25rem;
+  padding: var(--space-3xs) var(--space-xs);
+  color: var(--color-text-muted);
+  border-color: var(--border-subtle);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  color: var(--color-text);
+  border-color: var(--border-strong);
+}
+
+.btn--icon {
+  min-width: 2.75rem;
+  padding-inline: var(--space-2xs);
+}
+
+.btn__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+/* --- Panneaux de verre --------------------------------------------------- */
+.panel {
+  padding: var(--space-md);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-panel);
+  background-image: var(--gradient-surface);
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-panel);
+}
+
+.panel__title {
+  font-size: var(--text-h3);
+  margin-bottom: var(--space-2xs);
+}
+
+.panel__text {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.panel__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: var(--space-sm);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-cyan);
+  background: rgb(53 224 255 / 0.08);
+}
+
+/* --- Écran de chargement ------------------------------------------------- */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-content: center;
+  gap: var(--space-md);
+  padding: var(--gutter);
+  text-align: center;
+  background: radial-gradient(60rem 40rem at 50% 40%, #0b1226 0%, var(--color-void) 70%);
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.loading-screen[data-exiting='true'] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-screen__title {
+  font-family: var(--font-mono);
+  font-size: clamp(1.75rem, 1rem + 3.4vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.loading-screen__bar {
+  width: min(22rem, 70vw);
+  height: 3px;
+  margin-inline: auto;
+  border-radius: var(--radius-pill);
+  background: rgb(122 162 255 / 0.16);
+  overflow: hidden;
+}
+
+.loading-screen__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gradient-brand);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.loading-screen__status {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-faint);
+  letter-spacing: 0.08em;
+}
+
+/* --- Sélecteur de qualité ------------------------------------------------ */
+.quality-selector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+.quality-selector__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.quality-selector__options {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass);
+}
+
+.quality-selector__option {
+  min-height: 2rem;
+  padding: 0 var(--space-xs);
+  border: 0;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  background: none;
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.quality-selector__option:hover {
+  color: var(--color-text);
+}
+
+.quality-selector__option[aria-pressed='true'] {
+  color: var(--color-on-accent);
+  background: var(--gradient-brand);
+}
+
+.quality-selector__resolved {
+  font-size: var(--text-eyebrow);
+  color: var(--color-text-faint);
+}
+
+/* --- Repli WebGL --------------------------------------------------------- */
+.webgl-fallback {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: min(60svh, 30rem);
+  padding: var(--space-xl) var(--space-md);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background:
+    radial-gradient(28rem 20rem at 50% 45%, rgb(59 115 255 / 0.35), transparent 68%),
+    radial-gradient(18rem 18rem at 50% 45%, rgb(53 224 255 / 0.3), transparent 60%),
+    var(--color-deep);
+}
+
+/* Représentation CSS de NOVA CORE : anneaux concentriques statiques. */
+.webgl-fallback__figure {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.webgl-fallback__ring {
+  position: absolute;
+  border: 1px solid rgb(122 162 255 / 0.3);
+  border-radius: 50%;
+}
+
+.webgl-fallback__ring:nth-child(1) {
+  width: 8rem;
+  aspect-ratio: 1;
+  border-color: rgb(53 224 255 / 0.55);
+}
+
+.webgl-fallback__ring:nth-child(2) {
+  width: 14rem;
+  aspect-ratio: 1;
+}
+
+.webgl-fallback__ring:nth-child(3) {
+  width: 21rem;
+  aspect-ratio: 1;
+  border-style: dashed;
+}
+
+.webgl-fallback__content {
+  position: relative;
+  max-width: 42ch;
+  text-align: center;
+}
+
+.notice {
+  display: flex;
+  gap: var(--space-2xs);
+  align-items: flex-start;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: rgb(59 115 255 / 0.1);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.notice__icon {
+  flex: none;
+  color: var(--color-cyan);
+}
+
+/* --- Marqueurs de points d'intérêt (dans la scène) ----------------------- */
+.hotspot-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  padding: 3px 3px 3px 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass-strong);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.hotspot-marker:hover,
+.hotspot-marker[aria-pressed='true'] {
+  color: var(--color-text);
+  border-color: var(--color-cyan);
+}
+
+.hotspot-marker__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-cyan);
+  box-shadow: 0 0 8px 1px rgb(53 224 255 / 0.8);
+}
+
+.hotspot-marker__label {
+  padding-right: var(--space-2xs);
+}
+
+/* Sur petit écran, les marqueurs encombreraient la scène et pourraient déborder
+   du cadre : la liste HTML de la section Exploration les remplace entièrement. */
+@media (max-width: 47.99em) {
+  .hotspot-marker {
+    display: none;
+  }
+}
+
+/* --- Zone d'annonce discrète --------------------------------------------- */
+.live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

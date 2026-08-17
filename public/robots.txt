@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Remplacer par l'URL réelle une fois le site déployé.
+# Sitemap: https://exemple.tld/sitemap.xml

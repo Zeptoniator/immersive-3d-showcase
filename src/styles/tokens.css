@@ -1,0 +1,135 @@
+/**
+ * Jetons de design — point d'entrée unique pour personnaliser l'apparence.
+ *
+ * Modifier les valeurs ci-dessous suffit à re-thémer l'ensemble du site :
+ * couleurs, espacements, rayons, durées. Aucun composant ne code une couleur
+ * en dur.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* --- Palette de fond -------------------------------------------------- */
+  --color-void: #04060e;
+  --color-deep: #070b18;
+  --color-night: #0b1226;
+  --color-elevated: #101a33;
+
+  /* --- Accents ---------------------------------------------------------- */
+  --color-electric: #3b73ff;
+  --color-cyan: #35e0ff;
+  --color-violet: #a855f7;
+  --color-accent-soft: #7aa2ff;
+
+  /* --- Texte ------------------------------------------------------------ */
+  --color-text: #e9eefc;
+  --color-text-muted: #9fb0d4;
+  --color-text-faint: #6d7ea6;
+  --color-on-accent: #04060e;
+
+  /* --- Surfaces et bordures --------------------------------------------- */
+  --surface-glass: rgb(16 26 51 / 0.55);
+  --surface-glass-strong: rgb(11 18 38 / 0.86);
+  --surface-raised: rgb(20 32 62 / 0.7);
+  /**
+   * Fond des panneaux de contenu.
+   *
+   * Volontairement très opaque : ces blocs passent devant la scène 3D, y
+   * compris devant les zones les plus lumineuses de la vue éclatée. À 0,88
+   * d'opacité, le texte secondaire conserve un rapport de contraste supérieur
+   * à 6:1 même au-dessus d'un reflet cyan vif, tout en laissant deviner le
+   * mouvement derrière lui.
+   */
+  --surface-panel: rgb(9 15 32 / 0.88);
+  --border-subtle: rgb(122 162 255 / 0.16);
+  --border-strong: rgb(122 162 255 / 0.34);
+  --border-focus: var(--color-cyan);
+
+  /* --- Dégradés --------------------------------------------------------- */
+  --gradient-brand: linear-gradient(
+    100deg,
+    var(--color-cyan) 0%,
+    var(--color-accent-soft) 45%,
+    var(--color-violet) 100%
+  );
+  --gradient-surface: linear-gradient(160deg, rgb(35 56 108 / 0.42) 0%, rgb(11 18 38 / 0.2) 100%);
+
+  /* --- Lueurs ----------------------------------------------------------- */
+  --glow-cyan: 0 0 0 1px rgb(53 224 255 / 0.25), 0 0 32px -8px rgb(53 224 255 / 0.55);
+  --glow-violet: 0 0 40px -12px rgb(168 85 247 / 0.6);
+  --shadow-panel: 0 24px 60px -32px rgb(2 4 10 / 0.9);
+
+  /* --- Échelle d'espacement (base 4px) ---------------------------------- */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.25rem;
+  --space-xl: 3.5rem;
+  --space-2xl: 5rem;
+  --space-3xl: 7.5rem;
+
+  /* --- Rayons ----------------------------------------------------------- */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-pill: 999px;
+
+  /* --- Typographie ------------------------------------------------------ */
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Ubuntu, Cantarell,
+    sans-serif;
+  --font-mono:
+    ui-monospace, 'JetBrains Mono', 'Fira Code', 'SFMono-Regular', 'Ubuntu Mono', Menlo, monospace;
+
+  --text-eyebrow: clamp(0.688rem, 0.64rem + 0.2vw, 0.75rem);
+  --text-sm: clamp(0.813rem, 0.78rem + 0.16vw, 0.875rem);
+  --text-body: clamp(0.938rem, 0.9rem + 0.24vw, 1.063rem);
+  --text-lead: clamp(1.063rem, 0.98rem + 0.42vw, 1.25rem);
+  --text-h3: clamp(1.125rem, 1.02rem + 0.5vw, 1.375rem);
+  --text-h2: clamp(1.75rem, 1.32rem + 1.9vw, 3rem);
+  --text-display: clamp(2.25rem, 1.1rem + 4.2vw, 4.5rem);
+
+  --tracking-wide: 0.18em;
+  --leading-tight: 1.1;
+  --leading-body: 1.65;
+
+  /* --- Mouvement -------------------------------------------------------- */
+  --duration-fast: 140ms;
+  --duration-base: 260ms;
+  --duration-slow: 520ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* --- Structure -------------------------------------------------------- */
+  --content-max: 72rem;
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --header-height: 4rem;
+
+  /* Flou de verre : réduit à zéro quand l'utilisateur demande du contraste. */
+  --glass-blur: 14px;
+}
+
+/* Contraste renforcé : on retire les effets de verre et on durcit les bordures. */
+@media (prefers-contrast: more) {
+  :root {
+    --glass-blur: 0px;
+    --surface-glass: rgb(6 10 22 / 0.94);
+    --surface-glass-strong: rgb(4 6 14 / 0.97);
+    --surface-raised: rgb(10 16 34 / 0.96);
+    --surface-panel: rgb(4 7 16 / 0.98);
+    --border-subtle: rgb(180 205 255 / 0.45);
+    --border-strong: rgb(200 225 255 / 0.75);
+    --color-text-muted: #cdd9f2;
+    --color-text-faint: #a9b8d8;
+  }
+}
+
+/* Mouvement réduit : durées ramenées à un seuil imperceptible. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+  }
+}

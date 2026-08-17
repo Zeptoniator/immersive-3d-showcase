@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#04060e"/>
+  <circle cx="880" cy="315" r="330" fill="#0a1430"/>
+  <circle cx="880" cy="315" r="240" fill="#0d1c45"/>
+  <circle cx="880" cy="315" r="160" fill="#122459"/>
+  <g transform="translate(880 315)" fill="none">
+    <circle r="150" stroke="#3b73ff" stroke-width="2" opacity="0.5"/>
+    <circle r="112" stroke="#35e0ff" stroke-width="2" opacity="0.65"/>
+    <ellipse rx="196" ry="68" stroke="#7aa2ff" stroke-width="3" transform="rotate(-22)"/>
+    <ellipse rx="196" ry="68" stroke="#a855f7" stroke-width="3" opacity="0.75" transform="rotate(38)"/>
+    <ellipse rx="196" ry="68" stroke="#35e0ff" stroke-width="2" opacity="0.5" transform="rotate(88)"/>
+    <circle r="56" fill="#8ce9ff" stroke="none"/>
+    <circle r="34" fill="#e9fbff" stroke="none"/>
+  </g>
+  <rect x="90" y="238" width="52" height="3" fill="#35e0ff"/>
+  <text x="160" y="250" font-family="DejaVu Sans, sans-serif" font-size="30" letter-spacing="7" fill="#7aa2ff">NOVA CORE</text>
+  <text x="90" y="348" font-family="DejaVu Sans, sans-serif" font-size="68" font-weight="bold" fill="#e9eefc">Site vitrine 3D</text>
+  <text x="90" y="428" font-family="DejaVu Sans, sans-serif" font-size="68" font-weight="bold" fill="#35e0ff">interactif</text>
+  <text x="90" y="500" font-family="DejaVu Sans, sans-serif" font-size="25" fill="#9fb0d4">Three.js · React Three Fiber · GSAP ScrollTrigger</text>
+</svg>

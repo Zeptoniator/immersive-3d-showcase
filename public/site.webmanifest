@@ -1,0 +1,20 @@
+{
+  "name": "NOVA CORE — Site vitrine 3D interactif",
+  "short_name": "NOVA CORE",
+  "description": "Démonstration de site vitrine 3D immersif en temps réel (Three.js, React Three Fiber).",
+  "lang": "fr",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#04060e",
+  "theme_color": "#04060e",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

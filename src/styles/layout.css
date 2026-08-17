@@ -1,0 +1,274 @@
+/** Ossature de la page : couches, en-tête, sections, pied de page. */
+
+.app-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+/**
+ * Couche 3D.
+ *
+ * Fixe et non interactive : elle sert de décor derrière le contenu HTML. Les
+ * interactions 3D passent par une surface de contrôle dédiée (`.stage-control`)
+ * afin que la scène n'intercepte jamais le défilement de la page.
+ */
+.canvas-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Le canvas s'estompe légèrement sous les sections les plus textuelles. */
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.content-layer {
+  position: relative;
+  z-index: 1;
+}
+
+/**
+ * Voile de lisibilité sur petit écran.
+ *
+ * Sur un téléphone, la scène occupe toute la largeur derrière chaque paragraphe :
+ * le contraste ne peut pas être garanti au cas par cas. Ce voile fixe s'insère
+ * entre la couche 3D et le contenu — `z-index: -1` reste à l'intérieur du
+ * contexte d'empilement de `.content-layer`, donc au-dessus du canvas — et
+ * ramène le fond à un niveau constant sans masquer le mouvement.
+ */
+@media (max-width: 47.99em) {
+  .content-layer::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* Léger en haut — là où l'objet est cadré — et franc en bas, où se
+       concentre le texte. */
+    background: linear-gradient(
+      to bottom,
+      rgb(4 6 14 / 0.3) 0%,
+      rgb(4 6 14 / 0.52) 30%,
+      rgb(4 6 14 / 0.8) 62%
+    );
+  }
+}
+
+/* --- Lien d'évitement ---------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: var(--space-2xs);
+  left: var(--space-2xs);
+  z-index: 100;
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-elevated);
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 600;
+  transform: translateY(-150%);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* --- En-tête ------------------------------------------------------------- */
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-height: var(--header-height);
+  padding: var(--space-2xs) var(--gutter);
+  padding-top: max(var(--space-2xs), env(safe-area-inset-top));
+  background: linear-gradient(to bottom, rgb(4 6 14 / 0.88), rgb(4 6 14 / 0));
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.brand__mark {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-brand);
+  box-shadow: var(--glow-cyan);
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xs);
+}
+
+.site-nav__list {
+  display: flex;
+  gap: var(--space-3xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav__link {
+  display: inline-block;
+  padding: var(--space-3xs) var(--space-2xs);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.site-nav__link:hover {
+  color: var(--color-text);
+  background: rgb(122 162 255 / 0.1);
+}
+
+.site-nav__link[aria-current='true'] {
+  color: var(--color-text);
+  background: rgb(53 224 255 / 0.14);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+/* Menu compact sur petit écran : la liste devient un tiroir déroulant.
+   Le sélecteur est volontairement plus spécifique que `.btn`, défini plus loin
+   dans la cascade, afin de vraiment masquer le bouton sur grand écran. */
+.site-nav .site-nav__toggle {
+  display: none;
+}
+
+@media (max-width: 47.99em) {
+  .site-nav .site-nav__toggle {
+    display: inline-flex;
+  }
+
+  .site-nav__list {
+    position: absolute;
+    top: 100%;
+    right: var(--gutter);
+    flex-direction: column;
+    gap: var(--space-3xs);
+    min-width: 12rem;
+    padding: var(--space-2xs);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--surface-glass-strong);
+    backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--shadow-panel);
+  }
+
+  .site-nav__list[hidden] {
+    display: none;
+  }
+
+  .site-nav__link {
+    display: block;
+    padding: var(--space-2xs) var(--space-xs);
+  }
+}
+
+/* --- Sections ------------------------------------------------------------ */
+.section {
+  position: relative;
+  padding-block: var(--space-3xl);
+  padding-inline: var(--gutter);
+}
+
+.section__inner {
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
+}
+
+.section--full {
+  display: flex;
+  align-items: center;
+  /* `svh` évite le saut de hauteur lié aux barres d'adresse mobiles. */
+  min-height: 100svh;
+  /* Rembourrage haut mesuré : les appels à l'action du hero doivent rester
+     au-dessus de la ligne de flottaison sur un écran d'ordinateur portable. */
+  padding-block: calc(var(--header-height) + var(--space-lg)) var(--space-xl);
+}
+
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-cyan);
+}
+
+.section-eyebrow::before {
+  content: '';
+  width: 2rem;
+  height: 1px;
+  background: currentcolor;
+}
+
+.section-title {
+  font-size: var(--text-h2);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-sm);
+}
+
+.section-lead {
+  max-width: 46ch;
+  font-size: var(--text-lead);
+  color: var(--color-text-muted);
+}
+
+/* --- Pied de page -------------------------------------------------------- */
+.site-footer {
+  padding: var(--space-xl) var(--gutter) calc(var(--space-lg) + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-subtle);
+  background: rgb(4 6 14 / 0.72);
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  align-items: flex-start;
+  justify-content: space-between;
+  width: min(100%, var(--content-max));
+  margin-inline: auto;
+}
+
+.site-footer__note {
+  max-width: 44ch;
+  font-size: var(--text-sm);
+  color: var(--color-text-faint);
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}

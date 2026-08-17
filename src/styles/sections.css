@@ -1,0 +1,298 @@
+/** Mise en page propre à chaque section. */
+
+/* --- Hero ---------------------------------------------------------------- */
+.hero__inner {
+  display: grid;
+  gap: var(--space-md);
+  /* Le texte occupe la moitié gauche : la caméra décale l'objet 3D vers la
+     droite sur les écrans larges (voir `CameraRig`), les deux ne se
+     chevauchent donc jamais. */
+  max-width: 46rem;
+}
+
+.hero__wordmark {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.hero__title {
+  font-size: var(--text-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+.hero__title-accent {
+  display: block;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__lead {
+  max-width: 44ch;
+  font-size: var(--text-lead);
+  color: var(--color-text-muted);
+}
+
+.hero__scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.hero__scroll-cue svg {
+  animation: nudge 2.4s var(--ease-out) infinite;
+}
+
+@keyframes nudge {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(0.35rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll-cue svg {
+    animation: none;
+  }
+}
+
+/* Sur mobile, le contenu du hero est adossé au bas de l'écran pour dégager
+   l'objet 3D dans la moitié haute. */
+@media (max-width: 47.99em) {
+  .hero.section--full {
+    align-items: flex-end;
+    padding-bottom: var(--space-xl);
+  }
+
+  .hero__inner {
+    gap: var(--space-md);
+  }
+}
+
+/* --- Technologie --------------------------------------------------------- */
+.feature-grid {
+  display: grid;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+}
+
+/* La section Technologie est volontairement haute : elle sert de piste de
+   défilement à la vue éclatée. */
+.technology {
+  min-height: 220svh;
+}
+
+.technology__sticky {
+  position: sticky;
+  top: calc(var(--header-height) + var(--space-md));
+}
+
+/* --- Exploration interactive -------------------------------------------- */
+.interactive__layout {
+  display: grid;
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+  align-items: start;
+}
+
+@media (min-width: 62em) {
+  .interactive__layout {
+    /* Contenus opaques à gauche, surface de contrôle à droite, en regard de
+       l'objet 3D que la caméra décale de ce côté. */
+    grid-template-columns: minmax(18rem, 0.82fr) minmax(0, 1.18fr);
+  }
+}
+
+/**
+ * Surface de contrôle de la scène.
+ *
+ * `touch-action: pan-y` est la clé du confort mobile : le geste vertical reste
+ * confié au défilement de la page, seul le geste horizontal fait pivoter
+ * l'objet. L'utilisateur ne peut donc jamais rester « bloqué » dans la scène.
+ */
+.stage-control {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  min-height: min(62svh, 32rem);
+  padding: var(--space-sm);
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: rgb(11 18 38 / 0.25);
+  touch-action: pan-y;
+  cursor: grab;
+  transition: border-color var(--duration-base) var(--ease-out);
+}
+
+.stage-control:hover,
+.stage-control:focus-visible {
+  border-color: var(--border-strong);
+}
+
+.stage-control[data-dragging='true'] {
+  cursor: grabbing;
+  border-color: var(--color-cyan);
+}
+
+.stage-control__hint {
+  padding: var(--space-3xs) var(--space-xs);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass-strong);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.06em;
+  color: var(--color-text-faint);
+  pointer-events: none;
+}
+
+.stage-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-sm);
+}
+
+.hotspot-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin: 0 0 var(--space-md);
+  padding: 0;
+  list-style: none;
+}
+
+.hotspot-list__button {
+  min-height: 2.5rem;
+  padding: var(--space-3xs) var(--space-sm);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  /* Ces boutons peuvent se superposer à la scène : fond opaque obligatoire. */
+  background: var(--surface-panel);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.hotspot-list__button:hover {
+  color: var(--color-text);
+  border-color: var(--border-strong);
+}
+
+.hotspot-list__button[aria-pressed='true'] {
+  color: var(--color-text);
+  border-color: var(--color-cyan);
+  background: rgb(53 224 255 / 0.14);
+}
+
+.hotspot-card__metric {
+  display: inline-block;
+  margin-bottom: var(--space-2xs);
+  padding: 2px var(--space-2xs);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.08em;
+  color: var(--color-cyan);
+  background: rgb(53 224 255 / 0.1);
+}
+
+/* --- Performances -------------------------------------------------------- */
+.stat-grid {
+  display: grid;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+.stat__value {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.stat__label {
+  margin-bottom: var(--space-2xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.disclaimer {
+  margin-top: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-faint);
+  font-style: italic;
+}
+
+/* --- Section finale ------------------------------------------------------ */
+.final__inner {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+@media (min-width: 62em) {
+  .final__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    align-items: center;
+  }
+}
+
+.spec-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.spec-list__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  justify-content: space-between;
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--text-sm);
+}
+
+.spec-list__row:last-child {
+  border-bottom: 0;
+}
+
+.spec-list__term {
+  color: var(--color-text-faint);
+  margin: 0;
+}
+
+.spec-list__value {
+  margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  text-align: right;
+}

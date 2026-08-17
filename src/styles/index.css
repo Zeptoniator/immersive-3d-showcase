@@ -1,0 +1,9 @@
+/**
+ * Point d'entrée des styles.
+ * L'ordre d'import définit la cascade : jetons → base → ossature → composants.
+ */
+@import './tokens.css';
+@import './base.css';
+@import './layout.css';
+@import './components.css';
+@import './sections.css';
