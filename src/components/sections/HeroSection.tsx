@@ -56,8 +56,12 @@ export function HeroSection({ webglAvailable, fallbackReason }: HeroSectionProps
             </a>
           </div>
 
+          {/* L'invitation à défiler ne porte pas `data-reveal` : sur un écran de
+              téléphone elle tombe sous le seuil de déclenchement et
+              n'apparaîtrait qu'une fois la page défilée — soit exactement trop
+              tard pour la seule indication qui invite à défiler. */}
           {webglAvailable ? (
-            <p className="hero__scroll-cue" data-reveal>
+            <p className="hero__scroll-cue">
               <ChevronDown size={16} aria-hidden="true" />
               Faites défiler pour ouvrir la coque
             </p>

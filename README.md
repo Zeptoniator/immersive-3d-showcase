@@ -13,6 +13,10 @@ L'objet central, **NOVA CORE**, est un produit fictif entièrement procédural :
 il est composé de primitives Three.js et ne dépend d'aucun fichier externe. Le
 site fonctionne donc hors ligne et n'appelle aucun service tiers.
 
+**→ Voir le site en ligne : <https://zeptoniator.github.io/immersive-3d-showcase/>**
+
+![Section d'accueil de NOVA CORE : le titre « Une architecture qui se donne à voir » à gauche, l'objet 3D — un noyau lumineux entouré de trois anneaux et d'une coque métallique — à droite, et le bandeau de relevé en bas de fenêtre.](docs/captures/accueil.webp)
+
 ---
 
 ## Sommaire
@@ -53,16 +57,50 @@ Le site se compose de cinq sections :
 
 ### Captures d'écran
 
-Les captures se placent dans `src/assets/images/` et se référencent ici :
+Toutes les captures ci-dessous sont prises sur le **build de production**, dans
+un navigateur réel avec accélération matérielle. Le bandeau de relevé visible en
+bas de chaque image affiche donc de vraies valeurs mesurées au moment du
+déclenchement — y compris la fréquence d'images.
 
-```markdown
-![Section Accueil](src/assets/images/capture-hero.png)
-![Vue éclatée](src/assets/images/capture-technologie.png)
-![Exploration interactive](src/assets/images/capture-exploration.png)
-```
+#### Technologie — la coque s'ouvre au défilement
 
-Une image sociale prête à l'emploi est déjà fournie dans `public/og-image.png`
-(1200 × 630 px, générée localement).
+![Section Technologie : le titre « Trois principes, une seule boucle de rendu » et trois cartes descriptives à gauche, l'objet 3D à droite avec ses six panneaux de coque écartés du centre, révélant le noyau. Le relevé indique une ouverture de coque de 94 %.](docs/captures/technologie.webp)
+
+L'index `02` et les coordonnées `pose x3.6 y1.9 z5.9` affichés à côté du titre
+ne sont pas décoratifs : ils proviennent de la table qui pilote réellement la
+caméra. Le relevé en bas confirme la même pose et l'ouverture de coque en cours.
+
+#### Exploration — points d'intérêt et contrôle direct
+
+![Section Exploration : à gauche la liste des cinq points d'intérêt avec « Anneaux » sélectionné et sa fiche descriptive ; à droite l'objet 3D portant des marqueurs cliquables — Noyau, Coque, Anneaux, Émetteurs, Socle.](docs/captures/exploration.webp)
+
+Les marqueurs posés sur l'objet et la liste HTML de gauche pilotent la même
+sélection. La liste reste le chemin de navigation au clavier, et elle subsiste
+lorsque la 3D est indisponible.
+
+#### Performances — qualité adaptative
+
+![Section Performances : trois cartes d'indicateurs en monospace — 60 ips visés, 3 niveaux, 320 vers 2560 px — suivies de la mention signalant leur caractère démonstratif et du sélecteur manuel de qualité.](docs/captures/performances.webp)
+
+#### Mobile — portrait
+
+| Accueil                                                                                                                                                                                                                   | Exploration                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Accueil sur téléphone : l'objet 3D occupe la bande haute de l'écran, le texte et les deux appels à l'action sont adossés au bas, un voile assure la lisibilité par-dessus la scène.](docs/captures/mobile-accueil.webp) | ![Exploration sur téléphone : titre, liste des points d'intérêt sur deux rangs et fiche descriptive de la coque métallique segmentée.](docs/captures/mobile-exploration.webp) |
+
+Le bandeau de relevé se réduit à trois valeurs, et les marqueurs 3D cèdent la
+place à la seule liste HTML pour ne pas encombrer l'écran.
+
+#### Repli sans WebGL
+
+![Le site avec WebGL neutralisé : un bandeau informe que la scène 3D est remplacée par un aperçu statique, suivi d'une affiche en CSS reprenant le nom du produit, la cause probable et le détail technique. La navigation et les appels à l'action restent en place.](docs/captures/repli-webgl.webp)
+
+Aucun écran noir, aucune perte de contenu : seule la couche 3D disparaît. Le
+relevé bascule sur `qualité repli` et n'affiche plus de distance caméra.
+
+> Les captures sont regroupées dans `docs/captures/`. Une image sociale prête à
+> l'emploi est fournie dans `public/og-image.png` (1200 × 630 px, générée
+> localement).
 
 ---
 
@@ -265,6 +303,8 @@ horizontal sur chaque section.
 
 ```text
 immersive-3d-showcase/
+├── docs/
+│   └── captures/                 Captures d'écran de cette documentation
 ├── e2e/                          Tests Playwright
 │   ├── helpers.ts
 │   ├── no-webgl.spec.ts
