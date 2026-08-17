@@ -60,19 +60,9 @@ export function QualityManager() {
     warmup.current = 0
 
     /*
-     * Ré-estimation quand la zone d'affichage change réellement.
-     *
-     * La largeur de fenêtre n'est pas fiable au premier rendu. Mesuré dans une
-     * WebView Android : à la première ligne de script exécutée, `innerWidth`
-     * vaut 980 px — la zone d'affichage large par défaut — et ne descend à la
-     * largeur réelle de l'appareil (384 px) qu'une centaine de millisecondes
-     * plus tard. Un navigateur mobile produit le même effet au repli de sa
-     * barre d'adresse.
-     *
-     * L'événement `resize` n'est pas émis pour cette mise au point initiale :
-     * c'est précisément pourquoi un simple écouteur `resize` laissait le niveau
-     * figé sur la première estimation, prise sur une fenêtre fantôme. Un
-     * `ResizeObserver` sur l'élément racine, lui, la voit.
+     * Les signaux d'entrée ne sont pas fiables au tout premier rendu, et rien
+     * ne prévient toujours de leur mise au point. Trois mécanismes se
+     * complètent, chacun pour ce qu'il couvre réellement.
      */
     let timeout = 0
     const scheduleApply = () => {
@@ -80,15 +70,49 @@ export function QualityManager() {
       timeout = window.setTimeout(apply, 250)
     }
 
+    /*
+     * 1. Changements de zone d'affichage.
+     *
+     * Mesuré dans une WebView Android : à la première ligne de script exécutée,
+     * `innerWidth` vaut 980 px — la zone d'affichage large par défaut — et ne
+     * descend à la largeur réelle de l'appareil (384 px) qu'une centaine de
+     * millisecondes plus tard, sans émettre d'événement `resize`. Un navigateur
+     * mobile produit le même effet au repli de sa barre d'adresse. Un
+     * `ResizeObserver` sur l'élément racine, lui, voit ces changements.
+     */
     const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(scheduleApply) : null
     observer?.observe(document.documentElement)
 
-    // Un passage portrait → paysage change aussi significativement la charge.
+    // 2. Vrais changements de préférence ou d'orientation en cours de session.
+    const queries =
+      typeof window.matchMedia === 'function'
+        ? ['(prefers-reduced-motion: reduce)', '(pointer: coarse)'].map((query) =>
+            window.matchMedia(query)
+          )
+        : []
+    queries.forEach((query) => query.addEventListener('change', scheduleApply))
     window.addEventListener('resize', scheduleApply)
     window.addEventListener('orientationchange', scheduleApply)
 
+    /*
+     * 3. Relectures différées.
+     *
+     * Mesuré sur le même appareil : les requêtes média d'une WebView renvoient
+     * une valeur erronée au démarrage puis se corrigent après le premier rendu,
+     * **sans** émettre d'événement `change` — c'est ce qui affichait le site en
+     * sombre sur un téléphone réglé en clair. Une estimation prise pendant cette
+     * fenêtre resterait figée pour toute la session : un téléphone à 120 images
+     * par seconde était classé « faible », alors qu'un simple rechargement de la
+     * page donnait « moyenne ». Ni l'observateur ni les écouteurs ci-dessus ne
+     * couvrent ce cas, puisqu'aucun événement n'est émis et qu'aucune taille ne
+     * change.
+     */
+    const settleTimers = [600, 2000].map((delay) => window.setTimeout(apply, delay))
+
     return () => {
       observer?.disconnect()
+      settleTimers.forEach(window.clearTimeout)
+      queries.forEach((query) => query.removeEventListener('change', scheduleApply))
       window.clearTimeout(timeout)
       window.removeEventListener('resize', scheduleApply)
       window.removeEventListener('orientationchange', scheduleApply)
