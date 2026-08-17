@@ -59,6 +59,18 @@ export function QualityManager() {
     badWindows.current = 0
     warmup.current = 0
 
+    /*
+     * Relectures différées.
+     *
+     * La largeur de fenêtre n'est pas fiable au tout premier rendu : une
+     * WebView Android part d'une zone d'affichage large avant d'appliquer la
+     * balise `viewport`, et un navigateur mobile la fait varier au repli de sa
+     * barre d'adresse. Mesuré sur appareil : le premier échantillon voyait plus
+     * de 1000 px de large sur un téléphone, et le niveau restait bloqué sur
+     * cette estimation trop optimiste faute d'événement `resize` ultérieur.
+     */
+    const settleTimers = [400, 1500].map((delay) => window.setTimeout(apply, delay))
+
     // Un passage portrait → paysage ou un redimensionnement de fenêtre change
     // significativement la charge de rendu.
     let timeout = 0
@@ -70,6 +82,7 @@ export function QualityManager() {
     window.addEventListener('resize', onResize)
     window.addEventListener('orientationchange', onResize)
     return () => {
+      settleTimers.forEach(window.clearTimeout)
       window.clearTimeout(timeout)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('orientationchange', onResize)

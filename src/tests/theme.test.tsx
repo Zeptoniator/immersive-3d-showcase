@@ -8,6 +8,7 @@ import {
   THEME_COLORS,
   THEME_STORAGE_KEY,
   applyTheme,
+  documentTheme,
   loadStoredTheme,
   resolveTheme,
   storeTheme,
@@ -40,6 +41,23 @@ describe('résolution du thème', () => {
   it('ignore une valeur corrompue', () => {
     window.localStorage.setItem(THEME_STORAGE_KEY, 'sépia')
     expect(loadStoredTheme()).toBeNull()
+  })
+})
+
+describe('lecture du thème posé par le script d’amorçage', () => {
+  it('renvoie le thème présent sur <html>', () => {
+    document.documentElement.dataset.theme = 'light'
+    expect(documentTheme()).toBe('light')
+    document.documentElement.dataset.theme = 'dark'
+    expect(documentTheme()).toBe('dark')
+  })
+
+  it('renvoie null si l’attribut est absent ou incohérent', () => {
+    delete document.documentElement.dataset.theme
+    expect(documentTheme()).toBeNull()
+    document.documentElement.dataset.theme = 'sépia'
+    expect(documentTheme()).toBeNull()
+    delete document.documentElement.dataset.theme
   })
 })
 

@@ -57,9 +57,21 @@ export interface ScenePalette {
   haloColor: string
   haloOpacity: number
   panelColor: string
+  /**
+   * Couleur des panneaux quand les réflexions d'environnement sont coupées.
+   *
+   * Un matériau très métallique n'a presque pas de composante diffuse : privé
+   * de carte d'environnement, il n'a plus rien à réfléchir et se réduit à un
+   * aplat sans relief. En qualité faible, les panneaux repassent donc en
+   * matériau mat, avec une couleur choisie pour garder du contraste avec le
+   * fond du thème.
+   */
+  panelColorMatte: string
   panelRoughness: number
   panelMetalness: number
   ringColor: string
+  /** Même raison que `panelColorMatte`, pour les anneaux. */
+  ringColorMatte: string
   ringEmissive: string
   ringEmissiveIntensity: number
   emitterColor: string
@@ -111,9 +123,11 @@ const DARK: ScenePalette = {
   haloColor: '#35e0ff',
   haloOpacity: 0.13,
   panelColor: '#93a6cc',
+  panelColorMatte: '#6d80ad',
   panelRoughness: 0.24,
   panelMetalness: 0.94,
   ringColor: '#cfe4ff',
+  ringColorMatte: '#b9d0f5',
   ringEmissive: '#3b73ff',
   ringEmissiveIntensity: 0.9,
   emitterColor: '#bff4ff',
@@ -176,9 +190,11 @@ const LIGHT: ScenePalette = {
   // l'impression d'une tache posée devant l'objet.
   haloOpacity: 0.05,
   panelColor: '#54658a',
+  panelColorMatte: '#3d4d70',
   panelRoughness: 0.3,
   panelMetalness: 0.88,
   ringColor: '#3c5480',
+  ringColorMatte: '#2f4570',
   ringEmissive: '#2a54c8',
   ringEmissiveIntensity: 0.25,
   emitterColor: '#0b6b86',

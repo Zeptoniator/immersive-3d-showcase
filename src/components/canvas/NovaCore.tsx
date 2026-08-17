@@ -86,8 +86,12 @@ export function NovaCore({ settings, palette, reducedMotion }: NovaCoreProps) {
   // le mode de fusion en dépendent. L'effet de nettoyage plus bas libère
   // l'ancien jeu, il n'y a donc pas de fuite GPU au basculement.
   const materials = useMemo(() => {
-    const envIntensity = settings.environmentReflections ? 1.15 : 0.35
+    const hasEnvironment = settings.environmentReflections
+    const envIntensity = hasEnvironment ? 1.15 : 0.35
     const glow = glowBlending(palette)
+    // Sans carte d'environnement, un métal ne réfléchit rien : on baisse la
+    // métallicité pour lui rendre une composante diffuse, donc du modelé.
+    const matteMetalness = 0.32
 
     return {
       core: new THREE.MeshStandardMaterial({
@@ -115,18 +119,18 @@ export function NovaCore({ settings, palette, reducedMotion }: NovaCoreProps) {
         depthWrite: false,
       }),
       panel: new THREE.MeshStandardMaterial({
-        color: palette.panelColor,
-        metalness: palette.panelMetalness,
-        roughness: palette.panelRoughness,
+        color: hasEnvironment ? palette.panelColor : palette.panelColorMatte,
+        metalness: hasEnvironment ? palette.panelMetalness : matteMetalness,
+        roughness: hasEnvironment ? palette.panelRoughness : 0.62,
         side: THREE.DoubleSide,
         envMapIntensity: envIntensity,
       }),
       ring: new THREE.MeshStandardMaterial({
-        color: palette.ringColor,
+        color: hasEnvironment ? palette.ringColor : palette.ringColorMatte,
         emissive: new THREE.Color(palette.ringEmissive),
         emissiveIntensity: palette.ringEmissiveIntensity,
-        metalness: 0.8,
-        roughness: 0.3,
+        metalness: hasEnvironment ? 0.8 : matteMetalness,
+        roughness: hasEnvironment ? 0.3 : 0.55,
         envMapIntensity: envIntensity,
       }),
       emitter: new THREE.MeshBasicMaterial({ color: palette.emitterColor }),

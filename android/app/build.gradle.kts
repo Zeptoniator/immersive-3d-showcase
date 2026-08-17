@@ -13,8 +13,8 @@ android {
         // d'utiliser les icônes adaptatives sans jeu de PNG de repli.
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
 
         // URL consultée par l'application. Modifiable ici sans toucher au code :
         // elle est exposée au Kotlin via BuildConfig.SITE_URL.

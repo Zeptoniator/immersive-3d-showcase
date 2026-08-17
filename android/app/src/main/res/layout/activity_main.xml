@@ -3,7 +3,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/void_deep">
+    android:background="@color/surface">
 
     <WebView
         android:id="@+id/webView"
@@ -18,7 +18,7 @@
         android:layout_gravity="top"
         android:max="100"
         android:progress="0"
-        android:progressTint="@color/cyan"
+        android:progressTint="@color/accent"
         android:progressBackgroundTint="@android:color/transparent"
         android:visibility="gone" />
 
@@ -30,14 +30,14 @@
         android:orientation="vertical"
         android:gravity="center"
         android:padding="32dp"
-        android:background="@color/void_deep"
+        android:background="@color/surface"
         android:visibility="gone">
 
         <ImageView
             android:layout_width="88dp"
             android:layout_height="88dp"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_launcher_foreground"
+            android:src="@drawable/splash_logo"
             android:contentDescription="@null" />
 
         <TextView
@@ -69,8 +69,8 @@
             android:minHeight="48dp"
             android:paddingStart="28dp"
             android:paddingEnd="28dp"
-            android:backgroundTint="@color/cyan"
-            android:textColor="@color/void_deep"
+            android:backgroundTint="@color/accent"
+            android:textColor="@color/on_accent"
             android:textStyle="bold"
             android:text="@string/error_retry" />
     </LinearLayout>

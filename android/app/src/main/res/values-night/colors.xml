@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Palette du thème sombre, reprise de src/styles/tokens.css côté site. -->
+<resources>
+    <color name="surface">#04060E</color>
+    <color name="surface_raised">#0B1226</color>
+    <color name="accent">#35E0FF</color>
+    <color name="on_accent">#04060E</color>
+    <color name="text">#E9EEFC</color>
+    <color name="text_muted">#9FB0D4</color>
+
+    <color name="logo_ring">#3B73FF</color>
+    <color name="logo_orbit_cool">#35E0FF</color>
+    <color name="logo_orbit_warm">#A855F7</color>
+    <color name="logo_core">#BFF4FF</color>
+    <color name="logo_halo">#35E0FF</color>
+</resources>

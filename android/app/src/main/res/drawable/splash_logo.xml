@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Logo de l'écran de démarrage et de l'écran d'erreur.
+
+  Distinct de `ic_launcher_foreground` : ses couleurs sont des ressources, donc
+  résolues selon le mode nuit du système. L'icône de lanceur, elle, garde ses
+  couleurs fixes sur son fond sombre — une icône d'application ne doit pas
+  changer d'aspect selon le thème du téléphone.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Anneau intérieur -->
+    <path
+        android:pathData="M31,54 a23,23 0 1,0 46,0 a23,23 0 1,0 -46,0"
+        android:strokeColor="@color/logo_ring"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.75" />
+
+    <!-- Orbite inclinée vers la gauche -->
+    <group android:pivotX="54" android:pivotY="54" android:rotation="-24">
+        <path
+            android:pathData="M23,54 a31,12 0 1,0 62,0 a31,12 0 1,0 -62,0"
+            android:strokeColor="@color/logo_orbit_cool"
+            android:strokeWidth="2.6" />
+    </group>
+
+    <!-- Orbite inclinée vers la droite -->
+    <group android:pivotX="54" android:pivotY="54" android:rotation="38">
+        <path
+            android:pathData="M23,54 a31,12 0 1,0 62,0 a31,12 0 1,0 -62,0"
+            android:strokeColor="@color/logo_orbit_warm"
+            android:strokeWidth="2.6"
+            android:strokeAlpha="0.85" />
+    </group>
+
+    <!-- Halo du noyau -->
+    <path
+        android:pathData="M39,54 a15,15 0 1,0 30,0 a15,15 0 1,0 -30,0"
+        android:fillColor="@color/logo_halo"
+        android:fillAlpha="0.22" />
+
+    <!-- Noyau -->
+    <path
+        android:pathData="M44,54 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0"
+        android:fillColor="@color/logo_core" />
+</vector>

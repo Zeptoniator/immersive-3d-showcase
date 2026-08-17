@@ -30,6 +30,21 @@ export function useTheme(): void {
     // Le système peut basculer en cours de session (thème programmé le soir).
     onChange()
     query.addEventListener('change', onChange)
-    return () => query.removeEventListener('change', onChange)
+
+    /*
+     * Relecture différée.
+     *
+     * Certains environnements — mesuré dans une WebView Android — ne
+     * renvoient la bonne valeur de `prefers-color-scheme` qu'une fois le
+     * premier rendu passé, et n'émettent pas d'événement `change` pour cette
+     * mise au point. Sans cette relecture, la page reste bloquée sur le thème
+     * erroné jusqu'à un vrai changement système.
+     */
+    const settle = window.setTimeout(onChange, 800)
+
+    return () => {
+      window.clearTimeout(settle)
+      query.removeEventListener('change', onChange)
+    }
   }, [themePreference, setResolvedTheme])
 }

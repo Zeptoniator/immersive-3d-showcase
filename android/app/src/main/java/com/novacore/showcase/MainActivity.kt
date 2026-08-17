@@ -2,6 +2,7 @@ package com.novacore.showcase
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -19,9 +20,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import com.novacore.showcase.databinding.ActivityMainBinding
 
 /**
@@ -37,6 +42,11 @@ import com.novacore.showcase.databinding.ActivityMainBinding
  *    se retrouver « piégé » sur un site tiers sans barre d'adresse.
  * 3. **Hors ligne** — une page blanche serait inacceptable : l'absence de réseau
  *    ou une erreur de chargement affiche un écran dédié avec un bouton Réessayer.
+ * 4. **Thème** — l'habillage natif (fond, barres système, écran de démarrage,
+ *    écran d'erreur) suit le mode nuit du système, comme le fait le site. Sans
+ *    cela, un téléphone en thème clair afficherait un fond sombre pendant tout
+ *    le chargement, puis une page claire : un clignotement inverse du problème
+ *    que le site résout déjà de son côté.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -54,17 +64,26 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        // Le site est intégralement sombre : les barres système suivent.
+        // `auto` choisit le contraste des icônes système d'après le mode nuit :
+        // icônes sombres sur une page claire, claires sur une page sombre.
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
         )
+
+        // Débogage distant de la WebView, variante de débogage uniquement :
+        // permet d'inspecter la page depuis chrome://inspect ou via le protocole
+        // DevTools. Jamais actif dans une build de production.
+        if (BuildConfig.DEBUG) {
+            WebView.setWebContentsDebuggingEnabled(true)
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         applyWindowInsets()
         configureWebView()
+        applyThemeColors()
         registerBackNavigation()
 
         binding.retryButton.setOnClickListener { loadSite() }
@@ -75,6 +94,32 @@ class MainActivity : AppCompatActivity() {
         } else {
             loadSite()
         }
+    }
+
+    /**
+     * Applique les couleurs du thème courant aux surfaces natives.
+     *
+     * `configChanges` inclut `uiMode` pour ne pas détruire la WebView — et donc
+     * le contexte WebGL — quand le système bascule en mode sombre. En
+     * contrepartie, les vues déjà gonflées gardent les couleurs résolues au
+     * moment de leur création : il faut les réappliquer nous-mêmes. Cette
+     * fonction est donc appelée à la création puis à chaque changement de
+     * configuration.
+     */
+    private fun applyThemeColors() {
+        val surface = ContextCompat.getColor(this, R.color.surface)
+        val accent = ContextCompat.getColor(this, R.color.accent)
+
+        window.setBackgroundDrawable(surface.toDrawable())
+        // Fond repris du thème : plus de flash sombre avant le premier rendu.
+        binding.webView.setBackgroundColor(surface)
+        binding.errorView.setBackgroundColor(surface)
+        binding.progressBar.progressTintList = ColorStateList.valueOf(accent)
+
+        binding.errorTitle.setTextColor(ContextCompat.getColor(this, R.color.text))
+        binding.errorMessage.setTextColor(ContextCompat.getColor(this, R.color.text_muted))
+        binding.retryButton.backgroundTintList = ColorStateList.valueOf(accent)
+        binding.retryButton.setTextColor(ContextCompat.getColor(this, R.color.on_accent))
     }
 
     /**
@@ -116,7 +161,19 @@ class MainActivity : AppCompatActivity() {
             cacheMode = WebSettings.LOAD_DEFAULT
         }
 
-        setBackgroundColor(Color.parseColor("#04060E"))
+        /*
+         * Fait suivre `prefers-color-scheme` au mode nuit de l'application.
+         *
+         * Sans cela, la WebView signale toujours un thème clair et le site
+         * s'afficherait en clair sur un téléphone en mode sombre. Le site
+         * déclarant `color-scheme: dark light`, Android utilise ses styles
+         * sombres plutôt que d'inverser les couleurs de force — et un choix
+         * explicite fait depuis l'en-tête du site continue de primer.
+         */
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+            WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true)
+        }
+
         overScrollMode = View.OVER_SCROLL_NEVER
 
         webChromeClient = object : WebChromeClient() {
@@ -227,6 +284,15 @@ class MainActivity : AppCompatActivity() {
         // `configChanges` dans le manifeste évite de détruire la WebView à la
         // rotation : le contexte WebGL n'est donc jamais perdu.
         super.onConfigurationChanged(newConfig)
+
+        // Bascule clair/sombre du système : les ressources sont déjà résolues
+        // pour la nouvelle configuration, il reste à les reposer sur les vues
+        // et à recalculer le contraste des icônes système.
+        applyThemeColors()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
+        )
     }
 
     override fun onPause() {

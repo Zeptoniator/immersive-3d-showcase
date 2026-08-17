@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { QualityLevel, QualityPreference, SectionId } from '../types'
 import { loadStoredPreference, storePreference } from '../utils/quality'
 import {
+  documentTheme,
   loadStoredTheme,
   resolveTheme,
   storeTheme,
@@ -70,7 +71,12 @@ export const useExperienceStore = create<ExperienceState>((set) => ({
   loadingProgress: 0,
   activeSection: 'hero',
   themePreference: initialThemePreference,
-  resolvedTheme: resolveTheme(initialThemePreference),
+  // En mode automatique, on part du thème que le script d'amorçage a déjà
+  // posé sur `<html>` plutôt que d'interroger `matchMedia` une seconde fois.
+  resolvedTheme:
+    initialThemePreference === 'auto'
+      ? (documentTheme() ?? resolveTheme('auto'))
+      : initialThemePreference,
   qualityPreference: initialPreference,
   resolvedQuality: 'high',
   animationsPaused: false,

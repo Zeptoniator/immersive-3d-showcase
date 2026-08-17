@@ -24,6 +24,22 @@ export function systemTheme(): Theme {
   return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
 }
 
+/**
+ * Thème déjà posé sur le document par le script d'amorçage.
+ *
+ * C'est la valeur de référence au démarrage : le script s'exécute une fois le
+ * document présent, alors que l'évaluation des modules peut intervenir à un
+ * moment où `matchMedia` n'a pas encore la bonne réponse. Mesuré dans une
+ * WebView Android, où `prefers-color-scheme` se stabilise après le premier
+ * rendu — le store partait alors sur un thème sombre puis ne se corrigeait
+ * jamais, faute d'événement `change`.
+ */
+export function documentTheme(): Theme | null {
+  if (typeof document === 'undefined') return null
+  const value = document.documentElement.dataset.theme
+  return value === 'light' || value === 'dark' ? value : null
+}
+
 /** Résout la préférence en thème concret. */
 export function resolveTheme(preference: ThemePreference): Theme {
   return preference === 'auto' ? systemTheme() : preference

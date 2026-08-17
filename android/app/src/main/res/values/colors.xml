@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Palette du thème clair, reprise de src/styles/tokens.css côté site.
+
+  C'est le jeu par défaut : le thème `DayNight` bascule automatiquement sur
+  values-night/ quand le système est en mode sombre. L'habillage natif suit donc
+  la même préférence que la page affichée dans la WebView.
+-->
 <resources>
-    <!-- Palette reprise de src/styles/tokens.css côté web. -->
-    <color name="void_deep">#04060E</color>
-    <color name="night">#0B1226</color>
-    <color name="cyan">#35E0FF</color>
-    <color name="electric">#3B73FF</color>
-    <color name="violet">#A855F7</color>
-    <color name="text">#E9EEFC</color>
-    <color name="text_muted">#9FB0D4</color>
+    <color name="surface">#EEF2F9</color>
+    <color name="surface_raised">#FFFFFF</color>
+    <color name="accent">#0B6B86</color>
+    <color name="on_accent">#FFFFFF</color>
+    <color name="text">#0A1022</color>
+    <color name="text_muted">#3F4C68</color>
+
+    <!-- Logo de l'écran de démarrage : lisible sur fond clair. -->
+    <color name="logo_ring">#2A54C8</color>
+    <color name="logo_orbit_cool">#0B6B86</color>
+    <color name="logo_orbit_warm">#7C3AED</color>
+    <color name="logo_core">#0B6B86</color>
+    <color name="logo_halo">#0B6B86</color>
 </resources>
