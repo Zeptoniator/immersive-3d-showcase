@@ -3,6 +3,7 @@ import { Menu, X } from 'lucide-react'
 import { useExperienceStore } from '../../store/useExperienceStore'
 import { PRODUCT_NAME, SECTIONS } from '../../utils/content'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
+import { ThemeToggle } from '../ui/ThemeToggle'
 
 /**
  * En-tête fixe : marque et navigation par ancres.
@@ -36,37 +37,41 @@ export function SiteHeader() {
         {PRODUCT_NAME}
       </a>
 
-      <nav className="site-nav" aria-label="Navigation principale">
-        <button
-          type="button"
-          className="btn btn--ghost btn--icon site-nav__toggle"
-          aria-expanded={menuOpen}
-          aria-controls={menuId}
-          data-testid="nav-toggle"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
-          <span className="visually-hidden">
-            {menuOpen ? 'Fermer le menu' : 'Ouvrir le menu de navigation'}
-          </span>
-        </button>
+      <div className="site-header__tools">
+        <ThemeToggle />
 
-        <ul className="site-nav__list" id={menuId} hidden={listHidden} data-testid="nav-list">
-          {SECTIONS.map((section) => (
-            <li key={section.id}>
-              <a
-                className="site-nav__link"
-                href={`#${section.id}`}
-                aria-current={activeSection === section.id}
-                data-testid={`nav-link-${section.id}`}
-                onClick={() => setMenuOpen(false)}
-              >
-                {section.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+        <nav className="site-nav" aria-label="Navigation principale">
+          <button
+            type="button"
+            className="btn btn--ghost btn--icon site-nav__toggle"
+            aria-expanded={menuOpen}
+            aria-controls={menuId}
+            data-testid="nav-toggle"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
+            <span className="visually-hidden">
+              {menuOpen ? 'Fermer le menu' : 'Ouvrir le menu de navigation'}
+            </span>
+          </button>
+
+          <ul className="site-nav__list" id={menuId} hidden={listHidden} data-testid="nav-list">
+            {SECTIONS.map((section) => (
+              <li key={section.id}>
+                <a
+                  className="site-nav__link"
+                  href={`#${section.id}`}
+                  aria-current={activeSection === section.id}
+                  data-testid={`nav-link-${section.id}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {section.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
     </header>
   )
 }

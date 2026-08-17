@@ -3,10 +3,12 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { particleFragmentShader, particleVertexShader } from '../../shaders/particleShader'
 import { useExperienceStore } from '../../store/useExperienceStore'
+import { glowBlending, type ScenePalette } from '../../utils/scenePalette'
 
 interface ParticleFieldProps {
   /** Nombre de particules ; piloté par le niveau de qualité. */
   count: number
+  palette: ScenePalette
   /** Rayon de la coquille sphérique dans laquelle elles sont réparties. */
   radius?: number
 }
@@ -17,7 +19,7 @@ interface ParticleFieldProps {
  * Les attributs sont générés une fois par valeur de `count` : aucune allocation
  * n'a lieu dans la boucle de rendu, seule l'uniforme `uTime` est mise à jour.
  */
-export function ParticleField({ count, radius = 16 }: ParticleFieldProps) {
+export function ParticleField({ count, palette, radius = 16 }: ParticleFieldProps) {
   const materialRef = useRef<THREE.ShaderMaterial>(null)
   const elapsed = useRef(0)
   const animationsPaused = useExperienceStore((state) => state.animationsPaused)
@@ -46,16 +48,18 @@ export function ParticleField({ count, radius = 16 }: ParticleFieldProps) {
     return { positions, scales, offsets }
   }, [count, radius])
 
+  // Les uniformes sont recréés au changement de thème : en clair, les
+  // particules cessent d'ajouter de la lumière pour déposer de l'encre sombre.
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
-      uSize: { value: 6.5 },
+      uSize: { value: palette.particleSize },
       uPixelRatio: { value: 1 },
-      uOpacity: { value: 0.85 },
-      uColorNear: { value: new THREE.Color('#8ce9ff') },
-      uColorFar: { value: new THREE.Color('#4a63d8') },
+      uOpacity: { value: palette.particleOpacity },
+      uColorNear: { value: new THREE.Color(palette.particleNear) },
+      uColorFar: { value: new THREE.Color(palette.particleFar) },
     }),
-    []
+    [palette]
   )
 
   useFrame((_, delta) => {
@@ -95,13 +99,17 @@ export function ParticleField({ count, radius = 16 }: ParticleFieldProps) {
         />
       </bufferGeometry>
       <shaderMaterial
+        // Changer `blending` sur un matériau déjà compilé demanderait un
+        // `needsUpdate` manuel : on laisse plutôt React Three Fiber recréer —
+        // et libérer — le matériau au basculement de thème.
+        key={palette.additive ? 'additive' : 'normal'}
         ref={materialRef}
         uniforms={uniforms}
         vertexShader={particleVertexShader}
         fragmentShader={particleFragmentShader}
         transparent
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={glowBlending(palette)}
       />
     </points>
   )

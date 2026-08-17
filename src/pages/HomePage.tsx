@@ -14,6 +14,7 @@ import { usePointerParallax } from '../hooks/usePointerParallax'
 import { usePrefersReducedMotion } from '../hooks/useMediaQuery'
 import { useScrollChoreography } from '../hooks/useScrollChoreography'
 import { useSectionObserver } from '../hooks/useSectionObserver'
+import { useTheme } from '../hooks/useTheme'
 import { useExperienceStore } from '../store/useExperienceStore'
 import { probeWebGL } from '../utils/webgl'
 
@@ -56,6 +57,7 @@ export function HomePage() {
     if (!use3D) setSceneReady(true)
   }, [setSceneReady, setWebglAvailable, use3D])
 
+  useTheme()
   useSectionObserver()
   useScrollChoreography(true, reducedMotion)
   // La parallaxe est désactivée en mouvement réduit et sur pointeur grossier.

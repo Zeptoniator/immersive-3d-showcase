@@ -40,13 +40,13 @@
  */
 .btn--primary {
   color: var(--color-on-accent);
-  background: var(--color-cyan);
-  box-shadow: 0 0 28px -10px rgb(53 224 255 / 0.75);
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: #6ceaff;
-  box-shadow: 0 0 34px -6px rgb(53 224 255 / 0.85);
+  background: var(--color-accent-strong);
+  box-shadow: var(--glow-accent-hover);
 }
 
 .btn--secondary {
@@ -57,8 +57,8 @@
 }
 
 .btn--secondary:hover:not(:disabled) {
-  border-color: var(--color-cyan);
-  background: rgb(53 224 255 / 0.12);
+  border-color: var(--color-accent);
+  background: var(--tint-accent);
 }
 
 .btn--ghost {
@@ -130,8 +130,8 @@
   margin-bottom: var(--space-md);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  color: var(--color-cyan);
-  background: rgb(53 224 255 / 0.08);
+  color: var(--color-accent);
+  background: var(--tint-accent-weak);
 }
 
 /* --- Écran de chargement ------------------------------------------------- */
@@ -144,7 +144,7 @@
   gap: var(--space-md);
   padding: var(--gutter);
   text-align: center;
-  background: radial-gradient(60rem 40rem at 50% 40%, #0b1226 0%, var(--color-void) 70%);
+  background: var(--loading-veil);
   transition: opacity var(--duration-slow) var(--ease-out);
 }
 
@@ -166,14 +166,14 @@
   height: 3px;
   margin-inline: auto;
   border-radius: var(--radius-pill);
-  background: rgb(122 162 255 / 0.16);
+  background: var(--tint-neutral);
   overflow: hidden;
 }
 
 .loading-screen__fill {
   height: 100%;
   border-radius: inherit;
-  background: var(--color-cyan);
+  background: var(--color-accent);
   transform-origin: left center;
   transition: transform var(--duration-base) var(--ease-out);
 }
@@ -236,7 +236,7 @@
 
 .quality-selector__option[aria-pressed='true'] {
   color: var(--color-on-accent);
-  background: var(--color-cyan);
+  background: var(--color-accent);
 }
 
 .quality-selector__resolved {
@@ -254,10 +254,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background:
-    radial-gradient(28rem 20rem at 50% 45%, rgb(59 115 255 / 0.35), transparent 68%),
-    radial-gradient(18rem 18rem at 50% 45%, rgb(53 224 255 / 0.3), transparent 60%),
-    var(--color-deep);
+  background: var(--fallback-ambience), var(--color-deep);
 }
 
 /* Représentation CSS de NOVA CORE : anneaux concentriques statiques. */
@@ -271,14 +268,14 @@
 
 .webgl-fallback__ring {
   position: absolute;
-  border: 1px solid rgb(122 162 255 / 0.3);
+  border: 1px solid var(--border-subtle);
   border-radius: 50%;
 }
 
 .webgl-fallback__ring:nth-child(1) {
   width: 8rem;
   aspect-ratio: 1;
-  border-color: rgb(53 224 255 / 0.55);
+  border-color: var(--border-strong);
 }
 
 .webgl-fallback__ring:nth-child(2) {
@@ -305,14 +302,14 @@
   padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
-  background: rgb(59 115 255 / 0.1);
+  background: var(--tint-accent-weak);
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
 
 .notice__icon {
   flex: none;
-  color: var(--color-cyan);
+  color: var(--color-accent);
 }
 
 /* --- Marqueurs de points d'intérêt (dans la scène) ----------------------- */
@@ -337,15 +334,15 @@
 .hotspot-marker:hover,
 .hotspot-marker[aria-pressed='true'] {
   color: var(--color-text);
-  border-color: var(--color-cyan);
+  border-color: var(--color-accent);
 }
 
 .hotspot-marker__dot {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
-  background: var(--color-cyan);
-  box-shadow: 0 0 8px 1px rgb(53 224 255 / 0.8);
+  background: var(--color-accent);
+  box-shadow: var(--glow-dot);
 }
 
 .hotspot-marker__label {
@@ -372,7 +369,7 @@
   padding-inline: var(--gutter);
   padding-bottom: env(safe-area-inset-bottom);
   border-top: 1px solid var(--border-subtle);
-  background: rgb(4 6 14 / 0.9);
+  background: var(--readout-veil);
   backdrop-filter: blur(var(--glass-blur));
   font-family: var(--font-mono);
   font-size: var(--text-micro);
@@ -410,7 +407,7 @@
   /* Chiffres tabulaires : la largeur ne bouge pas quand la valeur change. */
   font-variant-numeric: tabular-nums;
   font-weight: 500;
-  color: var(--color-cyan);
+  color: var(--color-accent);
 }
 
 /* Hors nominal : la seule couleur chaude du site, et elle veut dire quelque chose. */

@@ -10,6 +10,7 @@ import { SceneEnvironment } from '../components/canvas/SceneEnvironment'
 import { SceneLights } from '../components/canvas/SceneLights'
 import { useExperienceStore } from '../store/useExperienceStore'
 import { QUALITY_PRESETS } from '../utils/quality'
+import { scenePalette } from '../utils/scenePalette'
 
 interface MainSceneProps {
   reducedMotion: boolean
@@ -28,7 +29,11 @@ export function MainScene({ reducedMotion }: MainSceneProps) {
   const setSceneReady = useExperienceStore((state) => state.setSceneReady)
   const setLoadingProgress = useExperienceStore((state) => state.setLoadingProgress)
 
+  const resolvedTheme = useExperienceStore((state) => state.resolvedTheme)
+
   const settings = QUALITY_PRESETS[resolvedQuality]
+  // Une seule source de vérité chromatique pour toute la scène.
+  const palette = scenePalette(resolvedTheme)
   const gl = useThree((state) => state.gl)
 
   useEffect(() => {
@@ -44,10 +49,10 @@ export function MainScene({ reducedMotion }: MainSceneProps) {
       <LoadingReporter />
       <QualityManager />
       <CameraRig reducedMotion={reducedMotion} />
-      <SceneLights settings={settings} />
-      <SceneEnvironment settings={settings} />
-      <NovaCore settings={settings} reducedMotion={reducedMotion} />
-      <ParticleField count={settings.particleCount} />
+      <SceneLights settings={settings} palette={palette} />
+      <SceneEnvironment settings={settings} palette={palette} />
+      <NovaCore settings={settings} palette={palette} reducedMotion={reducedMotion} />
+      <ParticleField count={settings.particleCount} palette={palette} />
       <HotspotMarkers />
     </>
   )

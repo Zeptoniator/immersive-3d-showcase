@@ -6,78 +6,34 @@
  * relevés en monospace, titres en condensé façon cartouche de plan, filets d'un
  * pixel — plutôt que celui d'une plaquette commerciale.
  *
- * Modifier les valeurs ci-dessous suffit à re-thémer l'ensemble du site :
- * aucun composant ne code une couleur ni une police en dur.
+ * Les deux thèmes prolongent cette lecture sans s'inverser bêtement :
+ * le sombre est la console éclairée, le clair est la planche imprimée sur
+ * papier technique. Chacun a donc ses propres valeurs d'accent, calculées pour
+ * le contraste, et non le même cyan posé sur un fond différent.
+ *
+ * Structure du fichier :
+ *   1. jetons indépendants du thème (espacement, typographie, mouvement) ;
+ *   2. thème sombre, appliqué par défaut ;
+ *   3. thème clair, sous `[data-theme='light']` ;
+ *   4. repli sans JavaScript, via `prefers-color-scheme` ;
+ *   5. ajustements pour `prefers-contrast`.
+ *
+ * Le thème est posé sur `<html data-theme="…">` par un script en tête de
+ * `index.html`, avant le premier rendu : aucun clignotement au chargement.
  */
 
+/* ===========================================================================
+   1. Indépendant du thème
+   ======================================================================== */
+
 :root {
-  color-scheme: dark;
-
-  /* --- Palette de fond -------------------------------------------------- */
-  --color-void: #04060e;
-  --color-deep: #070b18;
-  --color-night: #0b1226;
-  --color-elevated: #101a33;
-
-  /* --- Accents ---------------------------------------------------------- */
-  --color-electric: #3b73ff;
-  --color-cyan: #35e0ff;
-  --color-violet: #a855f7;
-  --color-accent-soft: #7aa2ff;
-
-  /**
-   * Ambre de signalisation.
-   *
-   * Unique couleur chaude de la palette, réservée à un seul usage : signaler
-   * dans le relevé qu'une valeur mesurée s'écarte du nominal (qualité
-   * rétrogradée, fluidité basse). Elle porte donc une information, elle ne
-   * décore rien — c'est ce qui justifie sa présence hors de la gamme froide.
-   */
-  --color-signal: #ffb454;
-
-  /* --- Texte ------------------------------------------------------------ */
-  --color-text: #e9eefc;
-  --color-text-muted: #9fb0d4;
-  --color-text-faint: #6d7ea6;
-  --color-on-accent: #04060e;
-
-  /* --- Surfaces et bordures --------------------------------------------- */
-  --surface-glass: rgb(16 26 51 / 0.55);
-  --surface-glass-strong: rgb(11 18 38 / 0.86);
-  --surface-raised: rgb(20 32 62 / 0.7);
-  /**
-   * Fond des panneaux de contenu.
-   *
-   * Volontairement très opaque : ces blocs passent devant la scène 3D, y
-   * compris devant les zones les plus lumineuses de la vue éclatée. À 0,88
-   * d'opacité, le texte secondaire conserve un rapport de contraste supérieur
-   * à 6:1 même au-dessus d'un reflet cyan vif, tout en laissant deviner le
-   * mouvement derrière lui.
-   */
-  --surface-panel: rgb(9 15 32 / 0.88);
-  --border-subtle: rgb(122 162 255 / 0.16);
-  --border-strong: rgb(122 162 255 / 0.34);
-  --border-focus: var(--color-cyan);
-
-  /* --- Dégradés --------------------------------------------------------- */
-  /**
-   * Le dégradé de marque est tenu à un seul emploi visible : la ligne d'accent
-   * du titre d'accueil. Partout ailleurs, le cyan est utilisé à plat. Un
-   * dégradé répété sur chaque chiffre et chaque bouton finit par ne plus rien
-   * signaler du tout.
-   */
-  --gradient-brand: linear-gradient(
-    100deg,
-    var(--color-cyan) 0%,
-    var(--color-accent-soft) 45%,
-    var(--color-violet) 100%
-  );
-
-  /* --- Lueurs ----------------------------------------------------------- */
-  --glow-cyan: 0 0 0 1px rgb(53 224 255 / 0.25), 0 0 32px -8px rgb(53 224 255 / 0.55);
-  --shadow-panel: 0 24px 60px -32px rgb(2 4 10 / 0.9);
-  /* Filet clair sur l'arête supérieure : donne l'épaisseur d'une plaque. */
-  --edge-highlight: inset 0 1px 0 0 rgb(154 186 255 / 0.14);
+  /* --- Couleurs de marque, brutes -------------------------------------- */
+  /* Ces valeurs ne changent jamais ; ce sont les jetons sémantiques plus bas
+     qui décident où et comment elles sont employées. */
+  --brand-cyan: #35e0ff;
+  --brand-electric: #3b73ff;
+  --brand-violet: #a855f7;
+  --brand-soft: #7aa2ff;
 
   /* --- Échelle d'espacement (base 4px) ---------------------------------- */
   --space-3xs: 0.25rem;
@@ -135,18 +91,291 @@
   --glass-blur: 14px;
 }
 
-/* Contraste renforcé : on retire les effets de verre et on durcit les bordures. */
+/* ===========================================================================
+   2. Thème sombre — la console éclairée (défaut)
+   ======================================================================== */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* --- Fonds ------------------------------------------------------------ */
+  --color-void: #04060e;
+  --color-deep: #070b18;
+  --color-night: #0b1226;
+  --color-elevated: #101a33;
+
+  /* --- Accents ---------------------------------------------------------- */
+  /* Sur fond très sombre, le cyan pur passe : 12:1 environ. */
+  --color-accent: var(--brand-cyan);
+  --color-accent-strong: #6ceaff;
+  --color-electric: var(--brand-electric);
+  --color-violet: var(--brand-violet);
+  --color-accent-soft: var(--brand-soft);
+
+  /**
+   * Ambre de signalisation.
+   *
+   * Unique couleur chaude de la palette, réservée à un seul usage : signaler
+   * dans le relevé qu'une valeur mesurée s'écarte du nominal (qualité
+   * rétrogradée, fluidité basse). Elle porte donc une information, elle ne
+   * décore rien — c'est ce qui justifie sa présence hors de la gamme froide.
+   */
+  --color-signal: #ffb454;
+
+  /* --- Texte ------------------------------------------------------------ */
+  --color-text: #e9eefc;
+  --color-text-muted: #9fb0d4;
+  --color-text-faint: #6d7ea6;
+  --color-on-accent: #04060e;
+
+  /* --- Surfaces et bordures --------------------------------------------- */
+  --surface-glass: rgb(16 26 51 / 0.55);
+  --surface-glass-strong: rgb(11 18 38 / 0.86);
+  /**
+   * Fond des panneaux de contenu.
+   *
+   * Volontairement très opaque : ces blocs passent devant la scène 3D, y
+   * compris devant les zones les plus lumineuses de la vue éclatée. À 0,88
+   * d'opacité, le texte secondaire conserve un rapport de contraste supérieur
+   * à 6:1 même au-dessus d'un reflet cyan vif, tout en laissant deviner le
+   * mouvement derrière lui.
+   */
+  --surface-panel: rgb(9 15 32 / 0.88);
+  --border-subtle: rgb(122 162 255 / 0.16);
+  --border-strong: rgb(122 162 255 / 0.34);
+  --border-focus: var(--color-accent);
+
+  /* --- Dégradés --------------------------------------------------------- */
+  /**
+   * Le dégradé de marque est tenu à deux emplois : la ligne d'accent du titre
+   * d'accueil et la pastille de marque. Partout ailleurs, l'accent est utilisé
+   * à plat. Un dégradé répété sur chaque chiffre et chaque bouton finit par ne
+   * plus rien signaler du tout.
+   */
+  --gradient-brand: linear-gradient(
+    100deg,
+    var(--brand-cyan) 0%,
+    var(--brand-soft) 45%,
+    var(--brand-violet) 100%
+  );
+
+  /* --- Ambiance de page -------------------------------------------------- */
+  /* Halos fixes derrière la scène : coût nul en rendu WebGL. */
+  --page-ambience:
+    radial-gradient(70rem 46rem at 78% -8%, rgb(59 115 255 / 0.2), transparent 62%),
+    radial-gradient(56rem 40rem at 6% 12%, rgb(168 85 247 / 0.14), transparent 60%),
+    radial-gradient(90rem 60rem at 50% 108%, rgb(53 224 255 / 0.11), transparent 65%);
+
+  /* Voile de lisibilité mobile, intercalé entre la scène et le contenu. */
+  --scrim: linear-gradient(
+    to bottom,
+    rgb(4 6 14 / 0.3) 0%,
+    rgb(4 6 14 / 0.52) 30%,
+    rgb(4 6 14 / 0.8) 62%
+  );
+  --header-veil: linear-gradient(to bottom, rgb(4 6 14 / 0.88), rgb(4 6 14 / 0));
+  --footer-veil: rgb(4 6 14 / 0.72);
+  --readout-veil: rgb(4 6 14 / 0.9);
+  --loading-veil: radial-gradient(60rem 40rem at 50% 40%, #0b1226 0%, var(--color-void) 70%);
+
+  /* --- Teintes d'accent, pour les fonds discrets ------------------------- */
+  --tint-accent-weak: rgb(53 224 255 / 0.08);
+  --tint-accent: rgb(53 224 255 / 0.14);
+  --tint-neutral: rgb(122 162 255 / 0.16);
+  --tint-hover: rgb(122 162 255 / 0.1);
+  --surface-stage: rgb(11 18 38 / 0.18);
+  --glow-dot: 0 0 8px 1px rgb(53 224 255 / 0.8);
+  --fallback-ambience:
+    radial-gradient(28rem 20rem at 50% 45%, rgb(59 115 255 / 0.35), transparent 68%),
+    radial-gradient(18rem 18rem at 50% 45%, rgb(53 224 255 / 0.3), transparent 60%);
+
+  /* --- Ombres et lueurs -------------------------------------------------- */
+  --shadow-panel: 0 24px 60px -32px rgb(2 4 10 / 0.9);
+  /* Filet clair sur l'arête supérieure : donne l'épaisseur d'une plaque. */
+  --edge-highlight: inset 0 1px 0 0 rgb(154 186 255 / 0.14);
+  --glow-accent: 0 0 28px -10px rgb(53 224 255 / 0.75);
+  --glow-accent-hover: 0 0 34px -6px rgb(53 224 255 / 0.85);
+}
+
+/* ===========================================================================
+   3. Thème clair — la planche imprimée
+   ======================================================================== */
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  /* --- Fonds ------------------------------------------------------------ */
+  /* Un blanc légèrement bleuté, pas un blanc pur : moins fatigant, et il
+     laisse respirer les filets d'un pixel. */
+  --color-void: #eef2f9;
+  --color-deep: #f5f8fc;
+  --color-night: #e2e9f4;
+  --color-elevated: #ffffff;
+
+  /* --- Accents ---------------------------------------------------------- */
+  /**
+   * Le cyan de marque plafonne à 1,6:1 sur fond clair : illisible. L'accent
+   * bascule donc sur un bleu-sarcelle profond, qui tient 5,4:1 sur le fond de
+   * page tout en restant de la même famille chromatique. Le cyan d'origine
+   * survit uniquement dans le dégradé de marque et dans la scène 3D, où il est
+   * une source lumineuse et non un texte.
+   */
+  --color-accent: #0b6b86;
+  --color-accent-strong: #08556b;
+  --color-electric: #2a54c8;
+  --color-violet: #7c3aed;
+  --color-accent-soft: #4a6fb8;
+
+  /* Ambre assombri pour rester lisible sur fond clair. */
+  --color-signal: #a25a00;
+
+  /* --- Texte ------------------------------------------------------------ */
+  --color-text: #0a1022;
+  --color-text-muted: #3f4c68;
+  --color-text-faint: #64708a;
+  --color-on-accent: #ffffff;
+
+  /* --- Surfaces et bordures --------------------------------------------- */
+  --surface-glass: rgb(255 255 255 / 0.7);
+  --surface-glass-strong: rgb(255 255 255 / 0.94);
+  /* Même rôle qu'en sombre : rester lisible par-dessus la scène. */
+  --surface-panel: rgb(255 255 255 / 0.92);
+  --border-subtle: rgb(20 40 90 / 0.14);
+  --border-strong: rgb(20 40 90 / 0.32);
+  --border-focus: var(--color-accent);
+
+  /* --- Dégradés --------------------------------------------------------- */
+  /* Assombri pour rester lisible en texte découpé sur fond clair. */
+  --gradient-brand: linear-gradient(100deg, #0b6b86 0%, #2a54c8 48%, #7c3aed 100%);
+
+  /* --- Ambiance de page -------------------------------------------------- */
+  --page-ambience:
+    radial-gradient(70rem 46rem at 78% -8%, rgb(59 115 255 / 0.12), transparent 62%),
+    radial-gradient(56rem 40rem at 6% 12%, rgb(168 85 247 / 0.09), transparent 60%),
+    radial-gradient(90rem 60rem at 50% 108%, rgb(11 107 134 / 0.08), transparent 65%);
+
+  --scrim: linear-gradient(
+    to bottom,
+    rgb(238 242 249 / 0.35) 0%,
+    rgb(238 242 249 / 0.6) 30%,
+    rgb(238 242 249 / 0.86) 62%
+  );
+  --header-veil: linear-gradient(to bottom, rgb(238 242 249 / 0.92), rgb(238 242 249 / 0));
+  --footer-veil: rgb(238 242 249 / 0.82);
+  --readout-veil: rgb(238 242 249 / 0.92);
+  --loading-veil: radial-gradient(60rem 40rem at 50% 40%, #ffffff 0%, var(--color-void) 70%);
+
+  /* --- Teintes d'accent, pour les fonds discrets ------------------------- */
+  --tint-accent-weak: rgb(11 107 134 / 0.08);
+  --tint-accent: rgb(11 107 134 / 0.13);
+  --tint-neutral: rgb(20 40 90 / 0.14);
+  --tint-hover: rgb(20 40 90 / 0.07);
+  --surface-stage: rgb(255 255 255 / 0.4);
+  --glow-dot: 0 0 6px 1px rgb(11 107 134 / 0.45);
+  --fallback-ambience:
+    radial-gradient(28rem 20rem at 50% 45%, rgb(42 84 200 / 0.16), transparent 68%),
+    radial-gradient(18rem 18rem at 50% 45%, rgb(11 107 134 / 0.14), transparent 60%);
+
+  /* --- Ombres et lueurs -------------------------------------------------- */
+  /* Sur papier, la profondeur vient de l'ombre portée, pas de la lueur. */
+  --shadow-panel: 0 18px 44px -28px rgb(12 28 66 / 0.4);
+  --edge-highlight: inset 0 1px 0 0 rgb(255 255 255 / 0.9);
+  --glow-accent: 0 6px 18px -8px rgb(11 107 134 / 0.5);
+  --glow-accent-hover: 0 8px 22px -8px rgb(11 107 134 / 0.6);
+}
+
+/* ===========================================================================
+   4. Repli sans JavaScript
+   ======================================================================== */
+
+/**
+ * Si le script d'amorçage n'a pas pu poser `data-theme`, la préférence système
+ * s'applique quand même. La garde `:not([data-theme])` évite d'écraser un choix
+ * explicite de l'utilisateur.
+ */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --color-void: #eef2f9;
+    --color-deep: #f5f8fc;
+    --color-night: #e2e9f4;
+    --color-elevated: #ffffff;
+    --color-accent: #0b6b86;
+    --color-accent-strong: #08556b;
+    --color-electric: #2a54c8;
+    --color-violet: #7c3aed;
+    --color-accent-soft: #4a6fb8;
+    --color-signal: #a25a00;
+    --color-text: #0a1022;
+    --color-text-muted: #3f4c68;
+    --color-text-faint: #64708a;
+    --color-on-accent: #ffffff;
+    --surface-glass: rgb(255 255 255 / 0.7);
+    --surface-glass-strong: rgb(255 255 255 / 0.94);
+    --surface-panel: rgb(255 255 255 / 0.92);
+    --border-subtle: rgb(20 40 90 / 0.14);
+    --border-strong: rgb(20 40 90 / 0.32);
+    --gradient-brand: linear-gradient(100deg, #0b6b86 0%, #2a54c8 48%, #7c3aed 100%);
+    --page-ambience:
+      radial-gradient(70rem 46rem at 78% -8%, rgb(59 115 255 / 0.12), transparent 62%),
+      radial-gradient(56rem 40rem at 6% 12%, rgb(168 85 247 / 0.09), transparent 60%),
+      radial-gradient(90rem 60rem at 50% 108%, rgb(11 107 134 / 0.08), transparent 65%);
+    --scrim: linear-gradient(
+      to bottom,
+      rgb(238 242 249 / 0.35) 0%,
+      rgb(238 242 249 / 0.6) 30%,
+      rgb(238 242 249 / 0.86) 62%
+    );
+    --header-veil: linear-gradient(to bottom, rgb(238 242 249 / 0.92), rgb(238 242 249 / 0));
+    --footer-veil: rgb(238 242 249 / 0.82);
+    --readout-veil: rgb(238 242 249 / 0.92);
+    --loading-veil: radial-gradient(60rem 40rem at 50% 40%, #ffffff 0%, var(--color-void) 70%);
+    --tint-accent-weak: rgb(11 107 134 / 0.08);
+    --tint-accent: rgb(11 107 134 / 0.13);
+    --tint-neutral: rgb(20 40 90 / 0.14);
+    --tint-hover: rgb(20 40 90 / 0.07);
+    --surface-stage: rgb(255 255 255 / 0.4);
+    --glow-dot: 0 0 6px 1px rgb(11 107 134 / 0.45);
+    --fallback-ambience:
+      radial-gradient(28rem 20rem at 50% 45%, rgb(42 84 200 / 0.16), transparent 68%),
+      radial-gradient(18rem 18rem at 50% 45%, rgb(11 107 134 / 0.14), transparent 60%);
+    --shadow-panel: 0 18px 44px -28px rgb(12 28 66 / 0.4);
+    --edge-highlight: inset 0 1px 0 0 rgb(255 255 255 / 0.9);
+    --glow-accent: 0 6px 18px -8px rgb(11 107 134 / 0.5);
+    --glow-accent-hover: 0 8px 22px -8px rgb(11 107 134 / 0.6);
+  }
+}
+
+/* ===========================================================================
+   5. Contraste renforcé et mouvement réduit
+   ======================================================================== */
+
+/* On retire les effets de verre et on durcit les bordures, dans les deux thèmes. */
 @media (prefers-contrast: more) {
   :root {
     --glass-blur: 0px;
+  }
+
+  :root,
+  :root[data-theme='dark'] {
     --surface-glass: rgb(6 10 22 / 0.94);
     --surface-glass-strong: rgb(4 6 14 / 0.97);
-    --surface-raised: rgb(10 16 34 / 0.96);
     --surface-panel: rgb(4 7 16 / 0.98);
     --border-subtle: rgb(180 205 255 / 0.45);
     --border-strong: rgb(200 225 255 / 0.75);
     --color-text-muted: #cdd9f2;
     --color-text-faint: #a9b8d8;
+  }
+
+  :root[data-theme='light'] {
+    --surface-glass: rgb(255 255 255 / 0.98);
+    --surface-glass-strong: #ffffff;
+    --surface-panel: #ffffff;
+    --border-subtle: rgb(12 28 66 / 0.4);
+    --border-strong: rgb(12 28 66 / 0.7);
+    --color-text-muted: #1c2740;
+    --color-text-faint: #2c3a56;
   }
 }
 

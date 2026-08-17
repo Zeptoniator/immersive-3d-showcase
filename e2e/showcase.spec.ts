@@ -153,6 +153,82 @@ test.describe('Accessibilité', () => {
   })
 })
 
+test.describe('Thème', () => {
+  test('suit la préférence système au premier chargement', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.goto('/')
+    await waitForExperienceReady(page)
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+    await expect(page.getByTestId('theme-option-auto')).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  test('bascule en clair puis en sombre depuis l’en-tête', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.goto('/')
+    await waitForExperienceReady(page)
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+
+    await page.getByTestId('theme-option-light').click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+    // La couleur de barre d'adresse suit le thème.
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#eef2f9')
+
+    await page.getByTestId('theme-option-dark').click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#04060e')
+  })
+
+  test('mémorise le choix et l’applique sans clignotement au rechargement', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.goto('/')
+    await waitForExperienceReady(page)
+    await page.getByTestId('theme-option-light').click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+
+    await page.reload()
+    // Vérifié avant même que l'application ne soit prête : c'est le script
+    // d'amorçage en tête de document qui doit avoir posé le thème.
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+
+    await waitForExperienceReady(page)
+    await expect(page.getByTestId('theme-option-light')).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  test('le choix manuel prime sur un changement du système', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.goto('/')
+    await waitForExperienceReady(page)
+
+    await page.getByTestId('theme-option-light').click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.waitForTimeout(500)
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+  })
+
+  test('le contenu reste lisible et sans débordement en thème clair', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.goto('/')
+    await waitForExperienceReady(page)
+
+    for (const id of ['hero', 'technology', 'interactive', 'performance', 'final']) {
+      await page.locator(`#${id}`).scrollIntoViewIfNeeded()
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+      )
+      expect(
+        overflow,
+        `Débordement horizontal en thème clair, section « ${id} »`
+      ).toBeLessThanOrEqual(1)
+    }
+
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    await expect(page.getByTestId('hotspot-card')).toBeVisible()
+  })
+})
+
 test.describe('Mise en page mobile', () => {
   test.use({ viewport: { width: 390, height: 844 } })
 

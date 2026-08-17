@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { QualitySettings } from '../../types'
+import { glowBlending, type ScenePalette } from '../../utils/scenePalette'
 import { scrollState } from '../../store/scrollState'
 import { useExperienceStore } from '../../store/useExperienceStore'
 import { damp, smoothstep } from '../../utils/math'
@@ -33,10 +34,11 @@ const EMITTER_ANGLES = Array.from({ length: EMITTER_COUNT }, (_, index) => ({
 
 interface NovaCoreProps {
   settings: QualitySettings
+  palette: ScenePalette
   reducedMotion: boolean
 }
 
-export function NovaCore({ settings, reducedMotion }: NovaCoreProps) {
+export function NovaCore({ settings, palette, reducedMotion }: NovaCoreProps) {
   const rootRef = useRef<THREE.Group>(null)
   const coreRef = useRef<THREE.Mesh>(null)
   const wireRef = useRef<THREE.Mesh>(null)
@@ -80,81 +82,86 @@ export function NovaCore({ settings, reducedMotion }: NovaCoreProps) {
   }, [detail])
 
   // --- Matériaux partagés --------------------------------------------------
+  // Reconstruits quand le thème change : les couleurs, les opacités et surtout
+  // le mode de fusion en dépendent. L'effet de nettoyage plus bas libère
+  // l'ancien jeu, il n'y a donc pas de fuite GPU au basculement.
   const materials = useMemo(() => {
     const envIntensity = settings.environmentReflections ? 1.15 : 0.35
+    const glow = glowBlending(palette)
+
     return {
       core: new THREE.MeshStandardMaterial({
-        color: '#0d1b3a',
-        emissive: new THREE.Color('#35e0ff'),
-        emissiveIntensity: 1.5,
+        color: palette.coreColor,
+        emissive: new THREE.Color(palette.coreEmissive),
+        emissiveIntensity: palette.coreEmissiveIntensity,
         metalness: 0.45,
         roughness: 0.18,
         envMapIntensity: envIntensity,
       }),
       wire: new THREE.MeshBasicMaterial({
-        color: '#7aa2ff',
+        color: palette.wireColor,
         wireframe: true,
         transparent: true,
-        opacity: 0.28,
-        blending: THREE.AdditiveBlending,
+        opacity: palette.wireOpacity,
+        blending: glow,
         depthWrite: false,
       }),
       halo: new THREE.MeshBasicMaterial({
-        color: '#35e0ff',
+        color: palette.haloColor,
         transparent: true,
-        opacity: settings.glow ? 0.13 : 0.06,
+        opacity: settings.glow ? palette.haloOpacity : palette.haloOpacity * 0.45,
         side: THREE.BackSide,
-        blending: THREE.AdditiveBlending,
+        blending: glow,
         depthWrite: false,
       }),
       panel: new THREE.MeshStandardMaterial({
-        color: '#93a6cc',
-        metalness: 0.94,
-        roughness: 0.24,
+        color: palette.panelColor,
+        metalness: palette.panelMetalness,
+        roughness: palette.panelRoughness,
         side: THREE.DoubleSide,
         envMapIntensity: envIntensity,
       }),
       ring: new THREE.MeshStandardMaterial({
-        color: '#cfe4ff',
-        emissive: new THREE.Color('#3b73ff'),
-        emissiveIntensity: 0.9,
+        color: palette.ringColor,
+        emissive: new THREE.Color(palette.ringEmissive),
+        emissiveIntensity: palette.ringEmissiveIntensity,
         metalness: 0.8,
         roughness: 0.3,
         envMapIntensity: envIntensity,
       }),
-      emitter: new THREE.MeshBasicMaterial({ color: '#bff4ff' }),
+      emitter: new THREE.MeshBasicMaterial({ color: palette.emitterColor }),
       emitterGlow: new THREE.MeshBasicMaterial({
-        color: '#a855f7',
+        color: palette.emitterGlowColor,
         transparent: true,
-        opacity: settings.glow ? 0.22 : 0.1,
+        opacity: settings.glow ? palette.emitterGlowOpacity : palette.emitterGlowOpacity * 0.45,
         side: THREE.BackSide,
-        blending: THREE.AdditiveBlending,
+        blending: glow,
         depthWrite: false,
       }),
       baseRing: new THREE.MeshBasicMaterial({
-        color: '#35e0ff',
+        color: palette.baseRingColor,
         transparent: true,
-        opacity: 0.35,
+        opacity: palette.baseRingOpacity,
         side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending,
+        blending: glow,
         depthWrite: false,
       }),
       basePlate: new THREE.MeshStandardMaterial({
-        color: '#060b18',
+        color: palette.basePlateColor,
         roughness: 0.92,
         metalness: 0.1,
         transparent: true,
-        opacity: 0.55,
+        opacity: palette.basePlateOpacity,
       }),
       spokes: new THREE.LineBasicMaterial({
-        color: '#3b73ff',
+        color: palette.spokeColor,
         transparent: true,
-        opacity: 0.28,
-        blending: THREE.AdditiveBlending,
+        opacity: palette.spokeOpacity,
+        blending: glow,
         depthWrite: false,
       }),
     }
-  }, [settings.environmentReflections, settings.glow])
+  }, [palette, settings.environmentReflections, settings.glow])
 
   // Libération explicite : ces objets sont créés hors du cycle déclaratif de
   // React Three Fiber, qui ne peut donc pas les recycler lui-même.
@@ -229,7 +236,8 @@ export function NovaCore({ settings, reducedMotion }: NovaCoreProps) {
       core.scale.setScalar(breathing)
       const material = core.material as THREE.MeshStandardMaterial
       const highlight = selectedHotspotId === 'core' ? 1.4 : 0
-      material.emissiveIntensity = 1.3 + Math.sin(pulse.current * 2.1) * 0.25 + highlight
+      material.emissiveIntensity =
+        palette.coreEmissiveIntensity * (0.87 + Math.sin(pulse.current * 2.1) * 0.17) + highlight
     }
 
     const wire = wireRef.current

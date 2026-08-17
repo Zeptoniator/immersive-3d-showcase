@@ -11,7 +11,36 @@
     />
     <meta name="author" content="Démonstration Three.js et React Three Fiber" />
     <meta name="theme-color" content="#04060e" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!--
+      Amorçage du thème.
+
+      Ce script doit rester en tête du document et rester synchrone : il pose
+      `data-theme` sur <html> avant le premier rendu, ce qui évite le
+      clignotement clair/sombre au chargement. Il est délibérément minuscule et
+      sans dépendance ; le reste de la logique vit dans src/utils/theme.ts.
+    -->
+    <script>
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('nova-core:theme-preference')
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark'
+          document.documentElement.dataset.theme = theme
+          document.documentElement.style.colorScheme = theme
+          var meta = document.querySelector('meta[name="theme-color"]')
+          if (meta) meta.setAttribute('content', theme === 'light' ? '#eef2f9' : '#04060e')
+        } catch (error) {
+          // Stockage inaccessible : le thème sombre par défaut s'applique.
+          document.documentElement.dataset.theme = 'dark'
+        }
+      })()
+    </script>
 
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="apple-touch-icon" href="./favicon.svg" />

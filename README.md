@@ -32,6 +32,7 @@ site fonctionne donc hors ligne et n'appelle aucun service tiers.
 - [Commandes disponibles](#commandes-disponibles)
 - [Structure du projet](#structure-du-projet)
 - [Direction artistique](#direction-artistique)
+- [Thème clair et sombre](#thème-clair-et-sombre)
 - [Personnalisation des couleurs](#personnalisation-des-couleurs)
 - [Remplacer l'objet procédural par un modèle GLB](#remplacer-lobjet-procédural-par-un-modèle-glb)
 - [Optimiser un modèle avec Blender](#optimiser-un-modèle-avec-blender)
@@ -81,6 +82,15 @@ lorsque la 3D est indisponible.
 #### Performances — qualité adaptative
 
 ![Section Performances : trois cartes d'indicateurs en monospace — 60 ips visés, 3 niveaux, 320 vers 2560 px — suivies de la mention signalant leur caractère démonstratif et du sélecteur manuel de qualité.](docs/captures/performances.webp)
+
+#### Thème clair
+
+![Le même site en thème clair : fond bleuté très pâle, titres noirs, cartes blanches à filet fin, et l'objet 3D devenu métal sombre sur fond de papier, avec sa coque écartée révélant un noyau sarcelle.](docs/captures/theme-clair-technologie.webp)
+
+Le mode clair n'est pas une inversion : l'objet 3D s'assombrit pour se détacher
+du fond, alors qu'il s'éclairait sur fond noir. Le champ de particules et les
+halos passent de la fusion additive à la fusion normale — voir
+[Thème clair et sombre](#thème-clair-et-sombre).
 
 #### Mobile — portrait
 
@@ -460,6 +470,74 @@ résume étant déjà exposées en clair ailleurs dans la page.
 
 ---
 
+## Thème clair et sombre
+
+Le site propose trois réglages — **système**, **clair**, **sombre** — accessibles
+depuis l'en-tête. Le choix est mémorisé sous la clé `nova-core:theme-preference`
+dans `localStorage`. Trois états plutôt qu'une bascule : après un choix manuel,
+une bascule à deux positions ne permettrait plus de revenir au réglage du
+système d'exploitation.
+
+La même vue dans les deux thèmes :
+
+| Sombre — la console éclairée                                                                                              | Clair — la planche imprimée                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Accueil en thème sombre : fond bleu nuit, titre blanc, objet 3D lumineux entouré de halos.](docs/captures/accueil.webp) | ![Accueil en thème clair : fond bleuté très pâle, titre noir, objet 3D en métal sombre posé sur une grille claire.](docs/captures/theme-clair.webp) |
+
+### Aucun clignotement au chargement
+
+Un script synchrone de quelques lignes, en tête de `index.html`, lit la
+préférence et pose `data-theme` sur `<html>` **avant le premier rendu**. Sans
+lui, la page s'afficherait en sombre pendant une image avant de basculer en
+clair. Ce script est volontairement autonome : il ne dépend d'aucun module et
+survit à un échec de chargement du bundle. Un test de bout en bout vérifie que
+le thème est correct dès le rechargement, avant même que l'application ne soit
+prête.
+
+### Le point difficile : le mode de fusion en WebGL
+
+Adapter l'interface à un fond clair est une affaire de jetons CSS. Adapter la
+**scène 3D** ne l'est pas.
+
+En thème sombre, les halos, le champ de particules et les cercles du socle
+utilisent `AdditiveBlending` : chaque pixel ajoute de la lumière au fond, ce qui
+produit la lueur. Sur un fond clair, ajouter de la lumière à du quasi-blanc ne
+change rien — ces éléments deviennent purement et simplement **invisibles**.
+
+Le thème clair repasse donc en fusion normale, avec des couleurs sombres : ce
+n'est plus de la lumière ajoutée mais de l'encre déposée. C'est aussi ce qui
+donne sa cohérence à la direction artistique — la console éclairée d'un côté, la
+planche imprimée de l'autre.
+
+Trois autres inversions découlent du même raisonnement :
+
+|                     | Thème sombre                          | Thème clair                                     |
+| ------------------- | ------------------------------------- | ----------------------------------------------- |
+| L'objet             | s'éclaire pour se détacher du noir    | s'assombrit pour se détacher du blanc           |
+| Les liserés colorés | intenses, ils sculptent la silhouette | mesurés, sinon ils délavent l'objet             |
+| Le socle            | translucide, l'ombre s'y voit peu     | opaque : les ombres portées deviennent lisibles |
+| L'accent            | cyan pur (12:1 sur fond sombre)       | bleu-sarcelle profond (5,4:1 sur fond clair)    |
+
+Le cyan de marque plafonne à 1,6:1 sur fond clair — illisible. Il survit
+uniquement dans le dégradé de marque et dans la scène 3D, où il est une source
+lumineuse et non un texte.
+
+### Où se règlent les deux thèmes
+
+| Couche                                                 | Fichier                     |
+| ------------------------------------------------------ | --------------------------- |
+| Interface (couleurs, surfaces, ombres, voiles)         | `src/styles/tokens.css`     |
+| Scène 3D (matériaux, lumières, brouillard, particules) | `src/utils/scenePalette.ts` |
+| Résolution, mémorisation, application au document      | `src/utils/theme.ts`        |
+| Suivi des changements système                          | `src/hooks/useTheme.ts`     |
+
+`scenePalette.ts` est le pendant 3D de `tokens.css` : aucun composant de la
+scène ne code une couleur en dur. Un test vérifie que les deux palettes
+déclarent exactement les mêmes réglages — un oubli produirait sinon un
+`undefined` silencieux au rendu.
+
+---
+
 ## Personnalisation des couleurs
 
 Toutes les couleurs, espacements, rayons et durées sont regroupés dans
@@ -741,7 +819,10 @@ server {
 - `prefers-reduced-motion` : parallaxe désactivée, trajectoire de caméra écrasée
   vers la pose d'accueil, révélations sans déplacement, durées ramenées à 1 ms.
 - `prefers-contrast: more` : effets de verre supprimés, bordures et textes
-  secondaires renforcés.
+  secondaires renforcés — dans les deux thèmes.
+- `prefers-color-scheme` respecté par défaut, avec un choix manuel possible et
+  mémorisé. Les deux thèmes ont leurs propres valeurs d'accent, calculées pour
+  le contraste plutôt que reprises de l'autre.
 - Sur petit écran, un voile fixe s'intercale entre la scène et le contenu, et
   les marqueurs posés sur l'objet sont masqués au profit de la liste HTML : le
   texte ne dépend jamais de ce qui est rendu derrière lui.

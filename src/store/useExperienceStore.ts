@@ -1,6 +1,13 @@
 import { create } from 'zustand'
 import type { QualityLevel, QualityPreference, SectionId } from '../types'
 import { loadStoredPreference, storePreference } from '../utils/quality'
+import {
+  loadStoredTheme,
+  resolveTheme,
+  storeTheme,
+  type Theme,
+  type ThemePreference,
+} from '../utils/theme'
 
 /**
  * État réellement partagé de l'expérience.
@@ -16,6 +23,10 @@ interface ExperienceState {
   loadingProgress: number
   /** Section actuellement visible, pour la navigation et le fil d'ariane. */
   activeSection: SectionId
+  /** Choix de thème de l'utilisateur (`auto` suit le système). */
+  themePreference: ThemePreference
+  /** Thème effectivement appliqué, après arbitrage. */
+  resolvedTheme: Theme
   /** Choix explicite de l'utilisateur (`auto` par défaut). */
   qualityPreference: QualityPreference
   /** Niveau effectivement appliqué, après arbitrage automatique. */
@@ -34,6 +45,8 @@ interface ExperienceState {
   setSceneReady: (ready: boolean) => void
   setLoadingProgress: (progress: number) => void
   setActiveSection: (section: SectionId) => void
+  setThemePreference: (preference: ThemePreference) => void
+  setResolvedTheme: (theme: Theme) => void
   setQualityPreference: (preference: QualityPreference) => void
   setResolvedQuality: (level: QualityLevel) => void
   toggleAnimations: () => void
@@ -49,10 +62,15 @@ interface ExperienceState {
 const initialPreference: QualityPreference =
   typeof window === 'undefined' ? 'auto' : (loadStoredPreference() ?? 'auto')
 
+const initialThemePreference: ThemePreference =
+  typeof window === 'undefined' ? 'auto' : (loadStoredTheme() ?? 'auto')
+
 export const useExperienceStore = create<ExperienceState>((set) => ({
   sceneReady: false,
   loadingProgress: 0,
   activeSection: 'hero',
+  themePreference: initialThemePreference,
+  resolvedTheme: resolveTheme(initialThemePreference),
   qualityPreference: initialPreference,
   resolvedQuality: 'high',
   animationsPaused: false,
@@ -68,6 +86,13 @@ export const useExperienceStore = create<ExperienceState>((set) => ({
     set((state) => ({ loadingProgress: Math.max(state.loadingProgress, loadingProgress) })),
 
   setActiveSection: (activeSection) => set({ activeSection }),
+
+  setThemePreference: (themePreference) => {
+    storeTheme(themePreference)
+    set({ themePreference, resolvedTheme: resolveTheme(themePreference) })
+  },
+
+  setResolvedTheme: (resolvedTheme) => set({ resolvedTheme }),
 
   setQualityPreference: (qualityPreference) => {
     storePreference(qualityPreference)
