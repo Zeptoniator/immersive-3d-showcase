@@ -60,32 +60,38 @@ export function QualityManager() {
     warmup.current = 0
 
     /*
-     * Relectures différées.
+     * Ré-estimation quand la zone d'affichage change réellement.
      *
-     * La largeur de fenêtre n'est pas fiable au tout premier rendu : une
-     * WebView Android part d'une zone d'affichage large avant d'appliquer la
-     * balise `viewport`, et un navigateur mobile la fait varier au repli de sa
-     * barre d'adresse. Mesuré sur appareil : le premier échantillon voyait plus
-     * de 1000 px de large sur un téléphone, et le niveau restait bloqué sur
-     * cette estimation trop optimiste faute d'événement `resize` ultérieur.
+     * La largeur de fenêtre n'est pas fiable au premier rendu. Mesuré dans une
+     * WebView Android : à la première ligne de script exécutée, `innerWidth`
+     * vaut 980 px — la zone d'affichage large par défaut — et ne descend à la
+     * largeur réelle de l'appareil (384 px) qu'une centaine de millisecondes
+     * plus tard. Un navigateur mobile produit le même effet au repli de sa
+     * barre d'adresse.
+     *
+     * L'événement `resize` n'est pas émis pour cette mise au point initiale :
+     * c'est précisément pourquoi un simple écouteur `resize` laissait le niveau
+     * figé sur la première estimation, prise sur une fenêtre fantôme. Un
+     * `ResizeObserver` sur l'élément racine, lui, la voit.
      */
-    const settleTimers = [400, 1500].map((delay) => window.setTimeout(apply, delay))
-
-    // Un passage portrait → paysage ou un redimensionnement de fenêtre change
-    // significativement la charge de rendu.
     let timeout = 0
-    const onResize = () => {
+    const scheduleApply = () => {
       window.clearTimeout(timeout)
       timeout = window.setTimeout(apply, 250)
     }
 
-    window.addEventListener('resize', onResize)
-    window.addEventListener('orientationchange', onResize)
+    const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(scheduleApply) : null
+    observer?.observe(document.documentElement)
+
+    // Un passage portrait → paysage change aussi significativement la charge.
+    window.addEventListener('resize', scheduleApply)
+    window.addEventListener('orientationchange', scheduleApply)
+
     return () => {
-      settleTimers.forEach(window.clearTimeout)
+      observer?.disconnect()
       window.clearTimeout(timeout)
-      window.removeEventListener('resize', onResize)
-      window.removeEventListener('orientationchange', onResize)
+      window.removeEventListener('resize', scheduleApply)
+      window.removeEventListener('orientationchange', scheduleApply)
     }
   }, [qualityPreference, setResolvedQuality])
 
