@@ -96,13 +96,16 @@ export function readDeviceSignals(): DeviceSignals {
 export function detectQualityLevel(signals: DeviceSignals): QualityLevel {
   let score = 100
 
-  if (signals.viewportWidth < 480) score -= 35
-  else if (signals.viewportWidth < 768) score -= 25
+  // Un petit écran coûte cher en remplissage, mais un téléphone récent reste
+  // parfaitement capable : les pénalités de format restent mesurées, et c'est
+  // la surveillance de la fluidité qui tranche ensuite les cas réels.
+  if (signals.viewportWidth < 480) score -= 25
+  else if (signals.viewportWidth < 768) score -= 18
   else if (signals.viewportWidth < 1024) score -= 12
 
-  if (signals.coarsePointer) score -= 15
+  if (signals.coarsePointer) score -= 10
 
-  if (signals.devicePixelRatio >= 3) score -= 15
+  if (signals.devicePixelRatio >= 3) score -= 10
   else if (signals.devicePixelRatio >= 2) score -= 8
 
   if (signals.hardwareConcurrency <= 2) score -= 30
@@ -118,7 +121,7 @@ export function detectQualityLevel(signals: DeviceSignals): QualityLevel {
   if (signals.prefersReducedMotion) score -= 20
 
   if (score >= 75) return 'high'
-  if (score >= 45) return 'medium'
+  if (score >= 40) return 'medium'
   return 'low'
 }
 

@@ -111,7 +111,7 @@ export const PERFORMANCE_STATS: ReadonlyArray<PerformanceStat> = [
     label: 'Qualité adaptative',
     value: '3 niveaux',
     detail:
-      "Élevée, moyenne et faible. Le niveau est déduit de la taille d'écran, du ratio de pixels, du nombre de cœurs et de la fluidité réellement observée, avec possibilité de forcer un choix.",
+      "Élevée, moyenne et faible. Le niveau est déduit de la taille d\u0027écran, du ratio de pixels, du nombre de cœurs et de la fluidité réellement mesurée, avec possibilité de forcer un choix.",
   },
   {
     id: 'responsive',

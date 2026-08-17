@@ -36,6 +36,23 @@ describe('detectQualityLevel', () => {
     ).toBe('low')
   })
 
+  it('ne rétrograde pas un téléphone haut de gamme au niveau le plus bas', () => {
+    // Cas mesuré sur un Samsung SM-S948B : écran étroit et ratio de pixels
+    // élevé, mais huit cœurs et un affichage à 120 Hz. Le classer « faible »
+    // serait un gâchis, et c'est la surveillance de la fluidité — pas
+    // l'heuristique initiale — qui doit trancher si la scène rame vraiment.
+    expect(
+      detectQualityLevel({
+        ...desktopSignals,
+        viewportWidth: 412,
+        devicePixelRatio: 3.4,
+        hardwareConcurrency: 8,
+        deviceMemory: 8,
+        coarsePointer: true,
+      })
+    ).toBe('medium')
+  })
+
   it('choisit un niveau intermédiaire sur une tablette', () => {
     expect(
       detectQualityLevel({
