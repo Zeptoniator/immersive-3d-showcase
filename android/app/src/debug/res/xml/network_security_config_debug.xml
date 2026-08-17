@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Variante de débogage uniquement.
+
+  Autorise le HTTP en clair vers la machine de développement (via `adb reverse`)
+  afin de tester un build local du site dans la WebView. Le trafic en clair
+  reste interdit partout ailleurs, et ce fichier n'est pas compilé dans la
+  variante de production.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

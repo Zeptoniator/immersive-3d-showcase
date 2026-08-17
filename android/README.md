@@ -71,6 +71,59 @@ buildConfigField("String", "SITE_HOST", "\"zeptoniator.github.io\"")
 ailleurs s'ouvre dans le navigateur du système, pour que l'utilisateur voie
 toujours l'origine réelle d'un site tiers.
 
+## Thème clair et sombre
+
+L'habillage natif suit le mode nuit du système, comme le fait le site.
+
+| Surface                                             | Ressource                                                                            |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Fond de fenêtre, écran de démarrage, écran d'erreur | `values/colors.xml` et `values-night/colors.xml`                                     |
+| Contraste des icônes de barre système               | `android:windowLightStatusBar` dans `values/themes.xml` et `values-night/themes.xml` |
+| Logo de démarrage                                   | `drawable/splash_logo.xml`, dont les couleurs sont des ressources                    |
+
+L'icône de lanceur, elle, garde des couleurs fixes sur son fond sombre : une
+icône d'application ne doit pas changer d'aspect selon le thème du téléphone.
+C'est pourquoi `splash_logo.xml` est distinct de `ic_launcher_foreground.xml`.
+
+Côté page, `WebSettingsCompat.setAlgorithmicDarkeningAllowed` fait suivre
+`prefers-color-scheme` au mode nuit de l'application. Le site déclarant
+`color-scheme: dark light`, Android utilise ses styles sombres plutôt que
+d'inverser les couleurs de force, et un choix explicite fait depuis l'en-tête du
+site continue de primer.
+
+`configChanges` inclut `uiMode` pour ne pas détruire la WebView — donc le
+contexte WebGL — quand le système bascule. En contrepartie, les vues déjà
+gonflées gardent les couleurs résolues à leur création : `applyThemeColors()`
+les repose à chaque changement de configuration.
+
+## Débogage
+
+La variante de débogage active deux facilités, absentes de la production :
+
+- `WebView.setWebContentsDebuggingEnabled(true)` — la page est inspectable
+  depuis `chrome://inspect` ou via le protocole DevTools ;
+- `src/debug/res/xml/network_security_config_debug.xml` — le HTTP en clair est
+  autorisé **uniquement** vers `127.0.0.1` et `localhost`, ce qui permet de
+  tester un build local du site dans la WebView.
+
+Servir un build local au téléphone :
+
+```bash
+# Sur la machine de développement
+npm run build && npm run preview -- --port 4173
+adb reverse tcp:4173 tcp:4173
+
+# Puis, dans l'application, naviguer vers http://127.0.0.1:4173/
+# (par exemple via le protocole DevTools)
+adb forward tcp:9222 localabstract:$(adb shell "cat /proc/net/unix | grep -o 'webview_devtools_remote_[0-9]*'" | head -1)
+```
+
+Cette chaîne a servi à diagnostiquer deux défauts que l'inspection visuelle ne
+permettait pas de trancher : un thème appliqué à l'envers et une qualité
+graphique bloquée sur son niveau le plus bas. Les requêtes média d'une WebView
+renvoient une valeur erronée au premier rendu puis se corrigent sans émettre
+d'événement `change` — c'est mesurable ainsi, pas devinable.
+
 ## Comportement
 
 | Situation                                 | Réponse de l'application                                                       |
